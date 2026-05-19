@@ -1,0 +1,86 @@
+import { Link, Navigate, Outlet, Route, Routes } from 'react-router-dom'
+import Header from './Components/header'
+import Footer from './Components/footer'
+import PasswordStrengthChecker from './Components/features/passwordStrengthChecker'
+import PasswordGenerator from './Components/features/passwordGenerator'
+import './App.css'
+
+const homeCards = [
+	{
+		title: 'Check Your Password Strength',
+		text: 'Enter a password and see how strong it is.',
+		to: '/checker',
+		button: 'Check Strength',
+	},
+	{
+		title: 'Generate a Strong Password',
+		text: 'Create a secure password based on your details.',
+		to: '/generator',
+		button: 'Generate Password',
+	},
+	{
+		title: 'Save and Manage Passwords',
+		text: 'Keep your passwords in one secure place.',
+		to: '/checker',
+		button: 'Explore',
+	},
+	{
+		title: 'Password Sharing',
+		text: 'Share passwords securely with trusted people.',
+		to: '/generator',
+		button: 'Try It',
+	},
+]
+
+function Layout() {
+	return (
+		<>
+			<Header />
+			<main className="main-content">
+				<Outlet />
+			</main>
+			<Footer />
+		</>
+	)
+}
+
+function HomePage() {
+	return (
+		<section className="page-section">
+			<div className="hero">
+				<p className="eyebrow">PassGuard</p>
+				<h1>Welcome to your personalized password manager</h1>
+				<p className="hero-text">
+					Check password strength, generate safer passwords, and keep your digital life organized.
+				</p>
+			</div>
+
+			<div className="card-grid">
+				{homeCards.map((card) => (
+					<article className="feature-card" key={card.title}>
+						<h2>{card.title}</h2>
+						<p>{card.text}</p>
+						<Link className="button-link" to={card.to}>
+							{card.button}
+						</Link>
+					</article>
+				))}
+			</div>
+		</section>
+	)
+}
+
+function App() {
+  return (
+		<Routes>
+			<Route element={<Layout />}>
+				<Route index element={<HomePage />} />
+				<Route path="checker" element={<PasswordStrengthChecker />} />
+				<Route path="generator" element={<PasswordGenerator />} />
+			</Route>
+			<Route path="*" element={<Navigate to="/" replace />} />
+		</Routes>
+  )
+}
+
+export default App
