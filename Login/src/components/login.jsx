@@ -9,10 +9,37 @@ function Login() {
         setShowPassword(!showPassword);
     };
 
-    const handleSubmit = (e) => {
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log("Login form submitted");
-        // Handle login logic here
+        const formData = new FormData(e.target);
+        const email = formData.get('email');
+        const password = formData.get('password');
+
+        try {
+            const response = await fetch('http://localhost:5000/api/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password }),
+            });
+            const data = await response.json();
+            if (response.ok) {
+                localStorage.setItem('token', data.token);
+                alert('Login successful! Redirecting to Password Manager...');
+                // Redirecting to Password Manager application and pass token so
+                // the other app can save it to its own origin's localStorage.
+                // Password Manager app reads `token` from query params.
+                const redirectUrl = `http://localhost:5173/?token=${encodeURIComponent(
+                    data.token
+                )}`;
+                window.location.href = redirectUrl;
+            } else {
+                alert(data.error);
+            }
+        } catch (error) {
+            console.error('Login error:', error);
+            alert('Login failed. Is the server running?');
+        }
     };
 
     return (

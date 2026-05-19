@@ -9,10 +9,29 @@ function Signup() {
     setShowPassword(!showPassword);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Signup form submitted");
-    // Handle signup logic here
+    const formData = new FormData(e.target);
+    const email = formData.get('email');
+    const password = formData.get('password');
+
+    try {
+      const response = await fetch('http://localhost:5000/api/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await response.json();
+      if (response.ok) {
+        alert('Signup successful! Please login.');
+        window.location.href = '/login';
+      } else {
+        alert(data.error);
+      }
+    } catch (error) {
+      console.error('Signup error:', error);
+      alert('Signup failed. Is the server running?');
+    }
   };
 
   return (

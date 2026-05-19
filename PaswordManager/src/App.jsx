@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { Link, Navigate, Outlet, Route, Routes } from 'react-router-dom'
 import Header from './Components/header'
 import Footer from './Components/footer'
@@ -71,6 +72,31 @@ function HomePage() {
 }
 
 function App() {
+  useEffect(() => {
+		// If the Password Manager was opened with a `token` query param (handed off
+		// from the Login app on a different dev port), save it into this origin's
+		// localStorage and remove the param from the URL.
+		try {
+			const params = new URLSearchParams(window.location.search);
+			const tokenFromUrl = params.get('token');
+			if (tokenFromUrl) {
+				localStorage.setItem('token', tokenFromUrl);
+				params.delete('token');
+				const newSearch = params.toString();
+				const newUrl = window.location.pathname + (newSearch ? `?${newSearch}` : '') + window.location.hash;
+				window.history.replaceState(null, '', newUrl);
+			}
+		} catch (e) {
+			// ignore malformed URL
+		}
+
+		const token = localStorage.getItem('token');
+		if (!token) {
+			// Redirect to the Login application if no token is found
+			window.location.href = 'http://localhost:5174';
+		}
+  }, []);
+
   return (
 		<Routes>
 			<Route element={<Layout />}>
