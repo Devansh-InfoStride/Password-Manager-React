@@ -258,13 +258,13 @@ function PasswordDashboard() {
 						<span className="view-all">Last Updated</span>
 					</div>
 					<div className="timeline-list">
-						{passwords.sort((a, b) => new Date(b.updatedAt || 0) - new Date(a.updatedAt || 0)).map((p, i) => {
-							const stale = isStale(p.updatedAt)
+						{passwords.sort((a, b) => new Date(b.last_updated || 0) - new Date(a.last_updated || 0)).map((p, i) => {
+							const stale = isStale(p.last_updated)
 							return (
 								<div className={`timeline-item ${stale ? 'stale' : ''}`} key={i}>
 									<div className="timeline-info">
 										<span className="timeline-site">{p.site}</span>
-										<span className="timeline-date">Updated: {formatDate(p.updatedAt)}</span>
+										<span className="timeline-date">Updated: {formatDate(p.last_updated)}</span>
 									</div>
 									<span className={`timeline-status ${stale ? 'status-stale' : 'status-fresh'}`}>
 										{stale ? 'Update Required' : 'Fresh'}

@@ -69,8 +69,9 @@ const passwordSchema = new mongoose.Schema({
     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     site: { type: String, required: true },
     username: { type: String, required: true },
-    password: { type: String, required: true } // stored as iv:encryptedData
-}, { timestamps: true });
+    password: { type: String, required: true }, // stored as iv:encryptedData
+    last_updated: { type: Date, default: Date.now }
+});
 
 const StoredPassword = mongoose.model('StoredPassword', passwordSchema);
 
@@ -122,7 +123,7 @@ app.get('/api/passwords', authenticateToken, async (req, res) => {
             site: p.site,
             username: p.username,
             password: decrypt(p.password),
-            updatedAt: p.updatedAt
+            last_updated: p.last_updated
         }));
         res.json(decryptedPasswords);
     } catch (error) {
@@ -138,10 +139,20 @@ app.post('/api/passwords', authenticateToken, async (req, res) => {
             userId: req.user.id,
             site,
             username,
-            password: encryptedPassword
+            password: encryptedPassword,
+            last_updated: new Date()
         });
         await newPassword.save();
-        res.status(201).json({ message: 'Password saved successfully', password: { _id: newPassword._id, site, username, password } });
+        res.status(201).json({ 
+            message: 'Password saved successfully', 
+            password: { 
+                _id: newPassword._id, 
+                site, 
+                username, 
+                password, 
+                last_updated: newPassword.last_updated 
+            } 
+        });
     } catch (error) {
         res.status(500).json({ error: 'Failed to save password' });
     }
@@ -153,6 +164,32 @@ app.delete('/api/passwords/:id', authenticateToken, async (req, res) => {
         res.json({ message: 'Password deleted successfully' });
     } catch (error) {
         res.status(500).json({ error: 'Failed to delete password' });
+    }
+});
+
+app.put('/api/passwords/:id', authenticateToken, async (req, res) => {
+    try {
+        const { site, username, password } = req.body;
+        const encryptedPassword = encrypt(password);
+        const updatedPassword = await StoredPassword.findOneAndUpdate(
+            { _id: req.params.id, userId: req.user.id },
+            { site, username, password: encryptedPassword, last_updated: new Date() },
+            { new: true }
+        );
+        if (!updatedPassword) return res.status(404).json({ error: 'Password not found' });
+        res.json({ 
+            message: 'Password updated successfully', 
+            password: { 
+                _id: updatedPassword._id, 
+                site, 
+                username, 
+                password, 
+                last_updated: updatedPassword.last_updated 
+            } 
+        });
+    } catch (error) {
+        console.error('Update error:', error);
+        res.status(500).json({ error: 'Failed to update password' });
     }
 });
 

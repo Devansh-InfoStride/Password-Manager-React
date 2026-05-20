@@ -5,6 +5,7 @@ function PasswordManager() {
 	const [form, setForm] = useState({ site: '', username: '', password: '' })
 	const [loading, setLoading] = useState(true)
 	const [message, setMessage] = useState('')
+	const [editingId, setEditingId] = useState(null)
 
 	const API_URL = 'http://localhost:5000/api/passwords'
 	const token = localStorage.getItem('token')
@@ -35,6 +36,14 @@ function PasswordManager() {
 
 	const handleSubmit = async (e) => {
 		e.preventDefault()
+		if (editingId) {
+			handleUpdate()
+		} else {
+			handleSave()
+		}
+	}
+
+	const handleSave = async () => {
 		try {
 			const response = await fetch(API_URL, {
 				method: 'POST',
@@ -56,6 +65,29 @@ function PasswordManager() {
 		}
 	}
 
+	const handleUpdate = async () => {
+		try {
+			const response = await fetch(`${API_URL}/${editingId}`, {
+				method: 'PUT',
+				headers: {
+					'Content-Type': 'application/json',
+					Authorization: `Bearer ${token}`
+				},
+				body: JSON.stringify(form)
+			})
+			if (response.ok) {
+				const data = await response.json()
+				setPasswords(passwords.map(p => p._id === editingId ? data.password : p))
+				setForm({ site: '', username: '', password: '' })
+				setEditingId(null)
+				setMessage('Password updated successfully!')
+				setTimeout(() => setMessage(''), 3000)
+			}
+		} catch (error) {
+			console.error('Error updating password', error)
+		}
+	}
+
 	const handleDelete = async (id) => {
 		if (!window.confirm('Are you sure you want to delete this password?')) return
 		try {
@@ -69,6 +101,17 @@ function PasswordManager() {
 		} catch (error) {
 			console.error('Error deleting password', error)
 		}
+	}
+
+	const startEditing = (password) => {
+		setEditingId(password._id)
+		setForm({ site: password.site, username: password.username, password: password.password })
+		window.scrollTo({ top: 0, behavior: 'smooth' })
+	}
+
+	const cancelEdit = () => {
+		setEditingId(null)
+		setForm({ site: '', username: '', password: '' })
 	}
 
 	return (
@@ -90,7 +133,10 @@ function PasswordManager() {
 					<label htmlFor="password">Password</label>
 					<input id="password" name="password" type="password" value={form.password} onChange={handleChange} placeholder="Password" required />
 
-					<button type="submit">Save Password</button>
+					<div style={{ display: 'flex', gap: '10px' }}>
+						<button type="submit" style={{ flex: 1 }}>{editingId ? 'Update Password' : 'Save Password'}</button>
+						{editingId && <button type="button" onClick={cancelEdit} style={{ background: '#64748b' }}>Cancel</button>}
+					</div>
 				</form>
 				{message && <p className="success-message">{message}</p>}
 			</div>
@@ -111,10 +157,18 @@ function PasswordManager() {
 									<div className="password-field">
 										<input type="text" value={p.password} readOnly />
 									</div>
+									<p style={{ fontSize: '0.75rem', color: 'var(--muted)', marginTop: '8px' }}>
+										Last Updated: {p.last_updated ? new Date(p.last_updated).toLocaleDateString() : 'Never'}
+									</p>
 								</div>
-								<button type="button" onClick={() => handleDelete(p._id)} className="delete-btn">
-									Delete
-								</button>
+								<div style={{ display: 'flex', gap: '8px', marginTop: '10px' }}>
+									<button type="button" onClick={() => startEditing(p)} style={{ background: '#3b82f6', flex: 1 }}>
+										Edit
+									</button>
+									<button type="button" onClick={() => handleDelete(p._id)} className="delete-btn" style={{ flex: 1 }}>
+										Delete
+									</button>
+								</div>
 							</article>
 						))}
 					</div>
