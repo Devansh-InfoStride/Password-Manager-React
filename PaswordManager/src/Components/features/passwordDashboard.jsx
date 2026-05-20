@@ -356,6 +356,29 @@ function PasswordDashboard() {
 				</div>
 			</div>
 
+			<div className="threatmap-card">
+				<div className="chart-card-header threatmap-header">
+					<h3>Live Threat Map</h3>
+					<a
+						href="https://threatmap.checkpoint.com/"
+						target="_blank"
+						rel="noreferrer"
+						className="view-all"
+					>
+						Open in new tab
+					</a>
+				</div>
+				<div className="threatmap-frame-wrap">
+					<iframe
+						title="Checkpoint Threat Map"
+						src="https://threatmap.checkpoint.com/"
+						className="threatmap-frame"
+						loading="lazy"
+						referrerPolicy="no-referrer"
+					/>
+				</div>
+			</div>
+
 
 
 			<div className="footer-note">
