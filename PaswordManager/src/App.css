@@ -335,3 +335,28 @@ button:hover {
     padding-inline: 12px;
   }
 }
+/* Password Manager Specific Styles */
+.password-info {
+  margin-bottom: 12px;
+}
+.password-username {
+  font-size: 0.9rem;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+.password-field {
+  display: flex;
+  gap: 8px;
+}
+.delete-btn {
+  background: #ef4444 !important;
+}
+.delete-btn:hover {
+  background: #dc2626 !important;
+}
+.success-message {
+  margin-top: 10px;
+  color: #10b981;
+  font-weight: 600;
+  text-align: center;
+}

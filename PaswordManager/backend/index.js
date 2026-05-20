@@ -4,12 +4,49 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
 
 dotenv.config();
 
 const app = express();
 app.use(express.json());
 app.use(cors());
+
+// Encryption Configuration
+const ALGORITHM = 'aes-256-cbc';
+const SECRET_KEY = process.env.ENCRYPTION_KEY || 'v6yB$E&H)MbQeThWmZq4t7w!z%C*F-Ja'; // 32 characters
+const IV_LENGTH = 16;
+
+const encrypt = (text) => {
+    const iv = crypto.randomBytes(IV_LENGTH);
+    const cipher = crypto.createCipheriv(ALGORITHM, Buffer.from(SECRET_KEY), iv);
+    let encrypted = cipher.update(text);
+    encrypted = Buffer.concat([encrypted, cipher.final()]);
+    return iv.toString('hex') + ':' + encrypted.toString('hex');
+};
+
+const decrypt = (text) => {
+    const textParts = text.split(':');
+    const iv = Buffer.from(textParts.shift(), 'hex');
+    const encryptedText = Buffer.from(textParts.join(':'), 'hex');
+    const decipher = crypto.createDecipheriv(ALGORITHM, Buffer.from(SECRET_KEY), iv);
+    let decrypted = decipher.update(encryptedText);
+    decrypted = Buffer.concat([decrypted, decipher.final()]);
+    return decrypted.toString();
+};
+
+// Middleware
+const authenticateToken = (req, res, next) => {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    if (!token) return res.status(401).json({ error: 'Access denied' });
+
+    jwt.verify(token, 'secret_key', (err, user) => {
+        if (err) return res.status(403).json({ error: 'Invalid token' });
+        req.user = user;
+        next();
+    });
+};
 
 // Healthcheck
 app.get('/api/ping', (req, res) => res.json({ ok: true, pid: process.pid }));
@@ -28,6 +65,15 @@ const userSchema = new mongoose.Schema({
 
 const User = mongoose.model('User', userSchema);
 
+const passwordSchema = new mongoose.Schema({
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    site: { type: String, required: true },
+    username: { type: String, required: true },
+    password: { type: String, required: true } // stored as iv:encryptedData
+});
+
+const StoredPassword = mongoose.model('StoredPassword', passwordSchema);
+
 // Signup Route
 app.post('/api/signup', async (req, res) => {
     try {
@@ -35,7 +81,6 @@ app.post('/api/signup', async (req, res) => {
         if (!email || !password) {
             return res.status(400).json({ error: 'Email and password are required' });
         }
-        // Check if email already exists to provide a friendly error
         const existingUser = await User.findOne({ email });
         if (existingUser) {
             return res.status(409).json({ error: 'Email already in use' });
@@ -46,21 +91,7 @@ app.post('/api/signup', async (req, res) => {
         await user.save();
         res.status(201).json({ message: 'User created successfully' });
     } catch (error) {
-        // Log error for debugging
         console.error('Signup error:', error);
-        // Handle duplicate key (email already exists)
-        const msg = String((error && (error.message || error)) || '');
-        if (
-            (error && error.code === 11000) ||
-            msg.includes('E11000') ||
-            msg.toLowerCase().includes('duplicate key') ||
-            (error && error.keyPattern && error.keyPattern.email) ||
-            (error && error.keyValue && error.keyValue.email)
-        ) {
-            console.error('Duplicate-email detected for signup:', msg);
-            return res.status(409).json({ error: 'Email already in use' });
-        }
-
         res.status(400).json({ error: 'Signup failed' });
     }
 });
@@ -79,6 +110,48 @@ app.post('/api/login', async (req, res) => {
         res.json({ token, message: 'Login successful' });
     } catch (error) {
         res.status(500).json({ error: 'Login failed' });
+    }
+});
+
+// Password Management Routes
+app.get('/api/passwords', authenticateToken, async (req, res) => {
+    try {
+        const passwords = await StoredPassword.find({ userId: req.user.id });
+        const decryptedPasswords = passwords.map(p => ({
+            _id: p._id,
+            site: p.site,
+            username: p.username,
+            password: decrypt(p.password)
+        }));
+        res.json(decryptedPasswords);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch passwords' });
+    }
+});
+
+app.post('/api/passwords', authenticateToken, async (req, res) => {
+    try {
+        const { site, username, password } = req.body;
+        const encryptedPassword = encrypt(password);
+        const newPassword = new StoredPassword({
+            userId: req.user.id,
+            site,
+            username,
+            password: encryptedPassword
+        });
+        await newPassword.save();
+        res.status(201).json({ message: 'Password saved successfully', password: { _id: newPassword._id, site, username, password } });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to save password' });
+    }
+});
+
+app.delete('/api/passwords/:id', authenticateToken, async (req, res) => {
+    try {
+        await StoredPassword.findOneAndDelete({ _id: req.params.id, userId: req.user.id });
+        res.json({ message: 'Password deleted successfully' });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to delete password' });
     }
 });
 

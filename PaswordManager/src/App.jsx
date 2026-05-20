@@ -4,6 +4,7 @@ import Header from './Components/header'
 import Footer from './Components/footer'
 import PasswordStrengthChecker from './Components/features/passwordStrengthChecker'
 import PasswordGenerator from './Components/features/passwordGenerator'
+import PasswordManager from './Components/features/passwordManager'
 import './App.css'
 
 const homeCards = [
@@ -22,7 +23,7 @@ const homeCards = [
 	{
 		title: 'Save and Manage Passwords',
 		text: 'Keep your passwords in one secure place.',
-		to: '/checker',
+		to: '/manage',
 		button: 'Explore',
 	},
 	{
@@ -103,6 +104,7 @@ function App() {
 				<Route index element={<HomePage />} />
 				<Route path="checker" element={<PasswordStrengthChecker />} />
 				<Route path="generator" element={<PasswordGenerator />} />
+				<Route path="manage" element={<PasswordManager />} />
 			</Route>
 			<Route path="*" element={<Navigate to="/" replace />} />
 		</Routes>
