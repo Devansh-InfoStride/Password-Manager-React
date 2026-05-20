@@ -178,12 +178,7 @@ function PasswordDashboard() {
 					<h1>Password Overview</h1>
 					<p>Insights about your passwords and overall security health.</p>
 				</div>
-				<div className="header-right">
-					<button className="export-btn">
-						<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-						Export
-					</button>
-				</div>
+		
 			</div>
 
 			{/* Metrics Row */}
@@ -361,55 +356,7 @@ function PasswordDashboard() {
 				</div>
 			</div>
 
-			{/* Security Tips */}
-			<div className="security-tips-section">
-				<div className="tips-header">
-					<h3>Security Tips</h3>
-					<a href="#" className="view-all">View all tips</a>
-				</div>
-				<div className="tips-list">
-					<div className="tip-item">
-						<div className="tip-content">
-							<div className="tip-icon green">
-								<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-							</div>
-							<div className="tip-details">
-								<h4>Great job! {Math.round((stats.strong / (stats.total || 1)) * 100)}% of your passwords are strong.</h4>
-								<p>Keep using long, unique passwords.</p>
-							</div>
-						</div>
-						<span className="tip-status">
-							<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-						</span>
-					</div>
 
-					<div className="tip-item">
-						<div className="tip-content">
-							<div className="tip-icon yellow">
-								<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3.5"></path></svg>
-							</div>
-							<div className="tip-details">
-								<h4>You have {stats.weak} weak passwords.</h4>
-								<p>Update them to make your accounts more secure.</p>
-							</div>
-						</div>
-						<button className="tip-action-btn">View weak passwords</button>
-					</div>
-
-					<div className="tip-item">
-						<div className="tip-content">
-							<div className="tip-icon red">
-								<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
-							</div>
-							<div className="tip-details">
-								<h4>{stats.compromised} passwords have been compromised.</h4>
-								<p>Change them immediately to protect your accounts.</p>
-							</div>
-						</div>
-						<button className="tip-action-btn">View compromised</button>
-					</div>
-				</div>
-			</div>
 
 			<div className="footer-note">
 				<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
