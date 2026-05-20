@@ -360,3 +360,115 @@ button:hover {
   font-weight: 600;
   text-align: center;
 }
+
+/* Dashboard Specific Styles */
+.dashboard-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.metrics-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.metric-card {
+  background: var(--panel);
+  padding: 24px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  text-align: center;
+}
+
+.metric-label {
+  font-size: 0.9rem;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.metric-value {
+  margin: 10px 0 0;
+  font-size: 2.2rem;
+  color: var(--text);
+}
+
+.metric-card.strong { border-left: 5px solid #22c55e; }
+.metric-card.moderate { border-left: 5px solid #eab308; }
+.metric-card.weak { border-left: 5px solid #ef4444; }
+
+.dashboard-charts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+@media (max-width: 900px) {
+  .dashboard-charts { grid-template-columns: 1fr; }
+}
+
+.card {
+  background: var(--panel);
+  padding: 24px;
+  border-radius: 22px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+}
+
+.card h3 {
+  margin: 0 0 20px;
+  font-size: 1.25rem;
+  color: var(--text);
+}
+
+.security-alert {
+  padding: 16px;
+  border-radius: 14px;
+  margin-bottom: 12px;
+  border-left: 4px solid #ccc;
+}
+
+.security-alert strong { display: block; margin-bottom: 4px; }
+.security-alert p { margin: 0; font-size: 0.9rem; color: var(--muted); }
+
+.security-alert.reused { background: #fef2f2; border-color: #ef4444; }
+.security-alert.weak { background: #fffbeb; border-color: #f97316; }
+.security-alert.success { background: #f0fdf4; border-color: #22c55e; }
+.security-alert.info { background: #eff6ff; border-color: #3b82f6; }
+
+.dashboard-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.dashboard-table th, .dashboard-table td {
+  padding: 14px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+.dashboard-table th {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  color: var(--muted);
+  letter-spacing: 0.05em;
+}
+
+.badge {
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.status-tag {
+  font-size: 0.75rem;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+.status-tag.reused { background: #fee2e2; color: #b91c1c; }
+.status-tag.unique { background: #dcfce7; color: #15803d; }

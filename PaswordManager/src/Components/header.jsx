@@ -22,6 +22,12 @@ function Header() {
 						</NavLink>
 					</li>
 					<li>
+						<NavLink to="/dashboard">Dashboard</NavLink>
+					</li>
+					<li>
+						<NavLink to="/manage">Manage</NavLink>
+					</li>
+					<li>
 						<NavLink to="/checker">Checker</NavLink>
 					</li>
 					<li>

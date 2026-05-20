@@ -70,7 +70,7 @@ const passwordSchema = new mongoose.Schema({
     site: { type: String, required: true },
     username: { type: String, required: true },
     password: { type: String, required: true } // stored as iv:encryptedData
-});
+}, { timestamps: true });
 
 const StoredPassword = mongoose.model('StoredPassword', passwordSchema);
 
@@ -121,7 +121,8 @@ app.get('/api/passwords', authenticateToken, async (req, res) => {
             _id: p._id,
             site: p.site,
             username: p.username,
-            password: decrypt(p.password)
+            password: decrypt(p.password),
+            updatedAt: p.updatedAt
         }));
         res.json(decryptedPasswords);
     } catch (error) {

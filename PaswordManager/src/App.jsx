@@ -5,9 +5,16 @@ import Footer from './Components/footer'
 import PasswordStrengthChecker from './Components/features/passwordStrengthChecker'
 import PasswordGenerator from './Components/features/passwordGenerator'
 import PasswordManager from './Components/features/passwordManager'
+import PasswordDashboard from './Components/features/passwordDashboard'
 import './App.css'
 
 const homeCards = [
+	{
+		title: 'Dashboard Analytics',
+		text: 'View your password security overview and health.',
+		to: '/dashboard',
+		button: 'View Dashboard',
+	},
 	{
 		title: 'Check Your Password Strength',
 		text: 'Enter a password and see how strong it is.',
@@ -25,12 +32,6 @@ const homeCards = [
 		text: 'Keep your passwords in one secure place.',
 		to: '/manage',
 		button: 'Explore',
-	},
-	{
-		title: 'Password Sharing',
-		text: 'Share passwords securely with trusted people.',
-		to: '/generator',
-		button: 'Try It',
 	},
 ]
 
@@ -102,6 +103,7 @@ function App() {
 		<Routes>
 			<Route element={<Layout />}>
 				<Route index element={<HomePage />} />
+				<Route path="dashboard" element={<PasswordDashboard />} />
 				<Route path="checker" element={<PasswordStrengthChecker />} />
 				<Route path="generator" element={<PasswordGenerator />} />
 				<Route path="manage" element={<PasswordManager />} />
