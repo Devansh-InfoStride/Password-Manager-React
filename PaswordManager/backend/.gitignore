@@ -13,6 +13,7 @@ dist-ssr
 *.local
 
 .env
+PaswordManager\backend\.env
 
 # Editor directories and files
 .vscode/*
