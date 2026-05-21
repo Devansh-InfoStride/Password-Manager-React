@@ -126,7 +126,9 @@ function PasswordGenerator() {
 							return (
 								<article className="password-item" key={password + index}>
 									<p className="password-label">Password {index + 1}</p>
-									<input type="text" value={password} readOnly />
+									<div className="password-value" title={password}>
+										{password}
+									</div>
 									<button type="button" onClick={() => handleCopy(password, index)}>
 										{copiedIndex === index ? 'Copied' : 'Copy'}
 									</button>

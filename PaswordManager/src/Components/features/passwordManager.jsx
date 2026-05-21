@@ -155,7 +155,9 @@ function PasswordManager() {
 									<p className="password-label">{p.site}</p>
 									<p className="password-username">User: {p.username}</p>
 									<div className="password-field">
-										<input type="text" value={p.password} readOnly />
+											<div className="password-value" title={p.password}>
+												{p.password}
+											</div>
 									</div>
 									<p style={{ fontSize: '0.75rem', color: 'var(--muted)', marginTop: '8px' }}>
 										Last Updated: {p.last_updated ? new Date(p.last_updated).toLocaleDateString() : 'Never'}

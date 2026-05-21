@@ -42,6 +42,7 @@ export const checkPasswordStrength = (password) => {
  */
 export const getStrengthInfo = (strength) => {
   if (strength === -1) return { text: "-", color: "#6b7280", percent: 0 };
+  const normalizedStrength = Math.max(0, Math.min(strength, 6));
   const labels = [
     { text: "Very Weak", color: "#ef4444", percent: 10 },
     { text: "Very Weak", color: "#ef4444", percent: 20 },
@@ -51,5 +52,5 @@ export const getStrengthInfo = (strength) => {
     { text: "Very Strong", color: "#22c55e", percent: 90 },
     { text: "Very Strong", color: "#22c55e", percent: 100 }
   ];
-  return labels[Math.min(strength, 6)];
+  return labels[normalizedStrength];
 };
