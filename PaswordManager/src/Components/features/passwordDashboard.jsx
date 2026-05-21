@@ -13,6 +13,8 @@ function PasswordDashboard() {
 		reused: 0,
 		lengthDist: [0, 0, 0, 0, 0], // <6, 6-8, 9-12, 13-16, 17+
 		unique: 0,
+		securityScore: 100,
+		stalePasswords: 0,
 	})
 	const [loading, setLoading] = useState(true)
 
@@ -44,6 +46,7 @@ function PasswordDashboard() {
 		let strong = 0, moderate = 0, weak = 0
 		let lengthDist = [0, 0, 0, 0, 0]
 		const passwordMap = {}
+		let staleCount = 0
 
 		data.forEach((p) => {
 			const { strength } = checkPasswordStrength(p.password)
@@ -51,6 +54,11 @@ function PasswordDashboard() {
 			else if (strength >= 3) moderate++
 			else {
 				weak++
+			}
+
+			// Check if password is stale
+			if (isStale(p.last_updated)) {
+				staleCount++
 			}
 
 			// Length Distribution
@@ -71,15 +79,24 @@ function PasswordDashboard() {
 			}
 		})
 
+		// Calculate security score
+		let securityScore = 100
+		securityScore -= moderate * 10  // -10 per medium password
+		securityScore -= weak * 15     // -15 per weak password
+		securityScore -= reusedCount * 3 // -3 per reused password
+		securityScore -= staleCount * 10 // -10 per stale password
+		securityScore = Math.max(0, securityScore) // Ensure score doesn't go below 0
+
 		setStats({
 			total: data.length,
 			strong,
 			moderate,
 			weak,
 			reused: reusedCount,
-			
 			lengthDist,
 			unique: data.length - reusedCount,
+			securityScore,
+			stalePasswords: staleCount,
 		})
 	}
 
@@ -315,6 +332,41 @@ function PasswordDashboard() {
 							{stats.reused > 5 && <div className="avatar more">+{stats.reused - 5}</div>}
 						</div>
 						<button className="view-details-btn">View details</button>
+					</div>
+				</div>
+
+				<div className="list-card">
+					<div className="list-header">
+						<h3>Overall Security Score</h3>
+					</div>
+					<div className="score-content">
+						<div className="score-display">
+							<div className="score-circle">
+								<span className="score-number">{stats.securityScore}</span>
+								<span className="score-label">/ 100</span>
+							</div>
+							<div className={`score-status ${stats.securityScore >= 80 ? 'status-excellent' : stats.securityScore >= 60 ? 'status-good' : stats.securityScore >= 40 ? 'status-fair' : 'status-poor'}`}>
+								{stats.securityScore >= 80 ? 'Excellent' : stats.securityScore >= 60 ? 'Good' : stats.securityScore >= 40 ? 'Fair' : 'Poor'}
+							</div>
+						</div>
+						<div className="score-breakdown">
+							<div className="breakdown-item">
+								<span className="breakdown-label">Medium Passwords</span>
+								<span className="breakdown-value">-{stats.moderate * 10}</span>
+							</div>
+							<div className="breakdown-item">
+								<span className="breakdown-label">Weak Passwords</span>
+								<span className="breakdown-value">-{stats.weak * 15}</span>
+							</div>
+							<div className="breakdown-item">
+								<span className="breakdown-label">Reused Passwords</span>
+								<span className="breakdown-value">-{stats.reused * 3}</span>
+							</div>
+							<div className="breakdown-item">
+								<span className="breakdown-label">Stale Passwords</span>
+								<span className="breakdown-value">-{stats.stalePasswords * 10}</span>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
