@@ -11,7 +11,6 @@ function PasswordDashboard() {
 		moderate: 0,
 		weak: 0,
 		reused: 0,
-		compromised: 0,
 		lengthDist: [0, 0, 0, 0, 0], // <6, 6-8, 9-12, 13-16, 17+
 		unique: 0,
 	})
@@ -42,7 +41,7 @@ function PasswordDashboard() {
 	}
 
 	const calculateStats = (data) => {
-		let strong = 0, moderate = 0, weak = 0, compromised = 0
+		let strong = 0, moderate = 0, weak = 0
 		let lengthDist = [0, 0, 0, 0, 0]
 		const passwordMap = {}
 
@@ -52,7 +51,6 @@ function PasswordDashboard() {
 			else if (strength >= 3) moderate++
 			else {
 				weak++
-				if (strength < 2) compromised++
 			}
 
 			// Length Distribution
@@ -79,7 +77,7 @@ function PasswordDashboard() {
 			moderate,
 			weak,
 			reused: reusedCount,
-			compromised,
+			
 			lengthDist,
 			unique: data.length - reusedCount,
 		})
@@ -87,8 +85,8 @@ function PasswordDashboard() {
 
 	// Chart Options
 	const strengthDonutOptions = {
-		labels: ['Strong', 'Medium', 'Weak', 'Very Weak'],
-		colors: ['#22c55e', '#f59e0b', '#f97316', '#ef4444'],
+		labels: ['Strong', 'Medium', 'Weak'],
+		colors: ['#22c55e', '#f59e0b', '#f97316'],
 		legend: { position: 'right', fontSize: '14px', markers: { radius: 12 } },
 		plotOptions: {
 			pie: {
@@ -133,8 +131,8 @@ function PasswordDashboard() {
 	}
 
 	const typeDonutOptions = {
-		labels: ['Unique', 'Reused', 'Compromised'],
-		colors: ['#818cf8', '#6366f1', '#f43f5e'],
+		labels: ['Unique', 'Reused'],
+		colors: ['#818cf8', '#6366f1'],
 		legend: { position: 'right' },
 		stroke: { show: false },
 		dataLabels: { enabled: false },
@@ -222,19 +220,7 @@ function PasswordDashboard() {
 						{Math.round((stats.weak / (stats.total || 1)) * 100)}% of total
 					</div>
 				</div>
-
-				<div className="stat-card">
-					<div className="stat-icon-wrapper red">
-						<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
-					</div>
-					<div className="stat-content">
-						<span className="stat-value">{stats.compromised}</span>
-						<span className="stat-label">Compromised</span>
-					</div>
-					<div className="stat-trend trend-down">
-						{Math.round((stats.compromised / (stats.total || 1)) * 100)}% of total
-					</div>
-				</div>
+		
 			</div>
 
 			{/* Charts Section */}
@@ -244,7 +230,7 @@ function PasswordDashboard() {
 						<h3>Password Strength Distribution</h3>
 						<svg className="info-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
 					</div>
-					<Chart options={strengthDonutOptions} series={[stats.strong, stats.moderate, stats.weak - stats.compromised, stats.compromised]} type="donut" width="100%" height={280} />
+					<Chart options={strengthDonutOptions} series={[stats.strong, stats.moderate, stats.weak]} type="donut" width="100%" height={280} />
 				</div>
 
 				<div className="chart-card">
@@ -298,27 +284,7 @@ function PasswordDashboard() {
 					</div>
 				</div>
 
-				<div className="list-card">
-					<div className="list-header">
-						<h3>Compromised Passwords</h3>
-						<a href="#" className="view-all">View all</a>
-					</div>
-					<div className="list-items">
-						{passwords.filter(p => checkPasswordStrength(p.password).strength < 2).slice(0, 3).map((p, i) => (
-							<div className="list-item" key={i}>
-								<div className="item-info">
-									<div className="item-icon">{p.site[0].toUpperCase()}</div>
-									<div className="item-details">
-										<span className="item-name">{p.site}</span>
-										<span className="item-user">{p.username}</span>
-									</div>
-								</div>
-								<span className="item-tag tag-compromised">Compromised</span>
-							</div>
-						))}
-						{stats.compromised === 0 && <p className="reused-text">No compromised passwords found.</p>}
-					</div>
-				</div>
+		
 
 				<div className="list-card">
 					<div className="list-header">
@@ -352,7 +318,7 @@ function PasswordDashboard() {
 					<div className="chart-card-header">
 						<h3>Password Types</h3>
 					</div>
-					<Chart options={typeDonutOptions} series={[stats.unique, stats.reused, stats.compromised]} type="donut" width="100%" height={280} />
+					<Chart options={typeDonutOptions} series={[stats.unique, stats.reused]} type="donut" width="100%" height={280} />
 				</div>
 			</div>
 
