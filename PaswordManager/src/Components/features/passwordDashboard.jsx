@@ -208,18 +208,31 @@ function PasswordDashboard() {
 					</div>
 				</div>
 
-				<div className="stat-card">
-					<div className="stat-icon-wrapper orange">
-						<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
-					</div>
-					<div className="stat-content">
-						<span className="stat-value">{stats.weak}</span>
-						<span className="stat-label">Weak Passwords</span>
-					</div>
-					<div className="stat-trend trend-down">
-						{Math.round((stats.weak / (stats.total || 1)) * 100)}% of total
-					</div>
+			<div className="stat-card">
+				<div className="stat-icon-wrapper amber">
+					<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2l3 7h7l-5.5 4 2 7L12 16l-6.5 4 2-7L2 9h7z"></path></svg>
 				</div>
+				<div className="stat-content">
+					<span className="stat-value">{stats.moderate}</span>
+					<span className="stat-label">Medium Passwords</span>
+				</div>
+				<div className="stat-trend trend-up">
+					{Math.round((stats.moderate / (stats.total || 1)) * 100)}% of total
+				</div>
+			</div>
+
+			<div className="stat-card">
+				<div className="stat-icon-wrapper orange">
+					<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+				</div>
+				<div className="stat-content">
+					<span className="stat-value">{stats.weak}</span>
+					<span className="stat-label">Weak Passwords</span>
+				</div>
+				<div className="stat-trend trend-down">
+					{Math.round((stats.weak / (stats.total || 1)) * 100)}% of total
+				</div>
+			</div>
 		
 			</div>
 
@@ -251,8 +264,9 @@ function PasswordDashboard() {
 										{stale ? 'Update Required' : 'Fresh'}
 									</span>
 								</div>
-							)
-						})}
+								)
+							})}
+
 						{passwords.length === 0 && <p className="reused-text">No passwords to track.</p>}
 					</div>
 				</div>
