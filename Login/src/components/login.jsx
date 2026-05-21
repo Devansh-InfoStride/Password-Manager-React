@@ -29,7 +29,7 @@ function Login() {
                 // Redirecting to Password Manager application and pass token so
                 // the other app can save it to its own origin's localStorage.
                 // Password Manager app reads `token` from query params.
-                const redirectUrl = `http://localhost:5173/?token=${encodeURIComponent(
+                const redirectUrl = `http://localhost:5174/?token=${encodeURIComponent(
                     data.token
                 )}`;
                 window.location.href = redirectUrl;
