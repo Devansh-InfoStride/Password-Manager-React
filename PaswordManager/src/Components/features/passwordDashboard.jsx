@@ -278,7 +278,7 @@ function PasswordDashboard() {
 										<span className="timeline-date">Updated: {formatDate(p.last_updated)}</span>
 									</div>
 									<span className={`timeline-status ${stale ? 'status-stale' : 'status-fresh'}`}>
-										{stale ? 'Update Required' : 'Fresh'}
+										{stale ? 'Update Required' : `${Math.max(0, 30 - Math.floor((new Date() - new Date(p.last_updated)) / (1000 * 60 * 60 * 24)))} days left`}
 									</span>
 								</div>
 								)
