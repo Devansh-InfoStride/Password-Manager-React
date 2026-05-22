@@ -2,6 +2,58 @@ import { useState } from 'react'
 import { checkPasswordStrength, getStrengthInfo } from '../../utils/passwordStrength'
 import { generatePersonalizedPassword } from '../../utils/passwordGenerator'
 
+function VisibilityIcon({ visible }) {
+	if (visible) {
+		return (
+			<svg viewBox="0 0 24 24" aria-hidden="true">
+				<path
+					d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z"
+					fill="none"
+					stroke="currentColor"
+					strokeWidth="1.8"
+					strokeLinecap="round"
+					strokeLinejoin="round"
+				/>
+				<circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" strokeWidth="1.8" />
+			</svg>
+		)
+	}
+
+	return (
+		<svg viewBox="0 0 24 24" aria-hidden="true">
+			<path
+				d="M3 3l18 18"
+				fill="none"
+				stroke="currentColor"
+				strokeWidth="1.8"
+				strokeLinecap="round"
+				strokeLinejoin="round"
+			/>
+			<path
+				d="M10.5 6.4A11.2 11.2 0 0 1 12 6c6.5 0 10 6 10 6a17 17 0 0 1-3.6 4.1"
+				fill="none"
+				stroke="currentColor"
+				strokeWidth="1.8"
+				strokeLinecap="round"
+				strokeLinejoin="round"
+			/>
+			<path
+				d="M6.2 9.2A17 17 0 0 0 2 12s3.5 6 10 6c1.5 0 2.9-.3 4.1-.8"
+				fill="none"
+				stroke="currentColor"
+				strokeWidth="1.8"
+				strokeLinecap="round"
+				strokeLinejoin="round"
+			/>
+		</svg>
+	)
+}
+
+const maskPassword = (value = '') => {
+	const length = Math.max(String(value).length, 8)
+	return '\u2022'.repeat(length)
+}
+
 const initialForm = {
 	length: 12,
 	name: '',
@@ -18,6 +70,7 @@ function PasswordGenerator() {
 	const [form, setForm] = useState(initialForm)
 	const [passwords, setPasswords] = useState([])
 	const [copiedIndex, setCopiedIndex] = useState(null)
+	const [visiblePasswords, setVisiblePasswords] = useState({})
 
 	const handleChange = (event) => {
 		const { name, type, checked, value } = event.target
@@ -50,6 +103,7 @@ function PasswordGenerator() {
 		)
 
 		setPasswords(generatedPasswords)
+		setVisiblePasswords({})
 	}
 
 	const handleCopy = async (password, index) => {
@@ -59,6 +113,13 @@ function PasswordGenerator() {
 
 		setCopiedIndex(index)
 		window.setTimeout(() => setCopiedIndex(null), 1200)
+	}
+
+	const togglePasswordVisibility = (index) => {
+		setVisiblePasswords((current) => ({
+			...current,
+			[index]: !current[index],
+		}))
 	}
 
 	return (
@@ -122,12 +183,22 @@ function PasswordGenerator() {
 					<div className="password-grid">
 						{passwords.map((password, index) => {
 							const strengthInfo = getStrengthInfo(checkPasswordStrength(password).strength)
+							const isVisible = Boolean(visiblePasswords[index])
 
 							return (
 								<article className="password-item" key={password + index}>
 									<p className="password-label">Password {index + 1}</p>
-									<div className="password-value" title={password}>
-										{password}
+									<div className="password-value password-value-row">
+										<span className="password-value-text">{isVisible ? password : maskPassword(password)}</span>
+										<button
+											type="button"
+											className="icon-toggle"
+											onClick={() => togglePasswordVisibility(index)}
+											aria-label={isVisible ? `Hide generated password ${index + 1}` : `Show generated password ${index + 1}`}
+											aria-pressed={isVisible}
+										>
+											<VisibilityIcon visible={isVisible} />
+										</button>
 									</div>
 									<button type="button" onClick={() => handleCopy(password, index)}>
 										{copiedIndex === index ? 'Copied' : 'Copy'}

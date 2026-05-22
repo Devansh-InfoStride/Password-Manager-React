@@ -1,6 +1,53 @@
 import { useState } from 'react'
 import { checkPasswordStrength, getStrengthInfo } from '../../utils/passwordStrength'
 
+function VisibilityIcon({ visible }) {
+	if (visible) {
+		return (
+			<svg viewBox="0 0 24 24" aria-hidden="true">
+				<path
+					d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z"
+					fill="none"
+					stroke="currentColor"
+					strokeWidth="1.8"
+					strokeLinecap="round"
+					strokeLinejoin="round"
+				/>
+				<circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" strokeWidth="1.8" />
+			</svg>
+		)
+	}
+
+	return (
+		<svg viewBox="0 0 24 24" aria-hidden="true">
+			<path
+				d="M3 3l18 18"
+				fill="none"
+				stroke="currentColor"
+				strokeWidth="1.8"
+				strokeLinecap="round"
+				strokeLinejoin="round"
+			/>
+			<path
+				d="M10.5 6.4A11.2 11.2 0 0 1 12 6c6.5 0 10 6 10 6a17 17 0 0 1-3.6 4.1"
+				fill="none"
+				stroke="currentColor"
+				strokeWidth="1.8"
+				strokeLinecap="round"
+				strokeLinejoin="round"
+			/>
+			<path
+				d="M6.2 9.2A17 17 0 0 0 2 12s3.5 6 10 6c1.5 0 2.9-.3 4.1-.8"
+				fill="none"
+				stroke="currentColor"
+				strokeWidth="1.8"
+				strokeLinecap="round"
+				strokeLinejoin="round"
+			/>
+		</svg>
+	)
+}
+
 function PasswordStrengthChecker() {
 	const [password, setPassword] = useState('')
 	const [showPassword, setShowPassword] = useState(false)
@@ -31,23 +78,24 @@ function PasswordStrengthChecker() {
 			<div className="form-card">
 				<form onSubmit={handleSubmit} className="stacked-form">
 					<label htmlFor="password">Enter your password</label>
-					<input
-						id="password"
-						type={showPassword ? 'text' : 'password'}
-						value={password}
-						onChange={(event) => setPassword(event.target.value)}
-						placeholder="Enter a strong password"
-					/>
-
-					<label className="checkbox-row" htmlFor="showPassword">
+					<div className="password-input-wrap">
 						<input
-							id="showPassword"
-							type="checkbox"
-							checked={showPassword}
-							onChange={(event) => setShowPassword(event.target.checked)}
+							id="password"
+							type={showPassword ? 'text' : 'password'}
+							value={password}
+							onChange={(event) => setPassword(event.target.value)}
+							placeholder="Enter a strong password"
 						/>
-						Show password
-					</label>
+						<button
+							type="button"
+							className="icon-toggle"
+							onClick={() => setShowPassword((current) => !current)}
+							aria-label={showPassword ? 'Hide password' : 'Show password'}
+							aria-pressed={showPassword}
+						>
+							<VisibilityIcon visible={showPassword} />
+						</button>
+					</div>
 
 					{password ? (
 						<div className="strength-display">

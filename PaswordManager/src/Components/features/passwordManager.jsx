@@ -1,11 +1,65 @@
 import { useState, useEffect } from 'react'
 
+function VisibilityIcon({ visible }) {
+	if (visible) {
+		return (
+			<svg viewBox="0 0 24 24" aria-hidden="true">
+				<path
+					d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z"
+					fill="none"
+					stroke="currentColor"
+					strokeWidth="1.8"
+					strokeLinecap="round"
+					strokeLinejoin="round"
+				/>
+				<circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" strokeWidth="1.8" />
+			</svg>
+		)
+	}
+
+	return (
+		<svg viewBox="0 0 24 24" aria-hidden="true">
+			<path
+				d="M3 3l18 18"
+				fill="none"
+				stroke="currentColor"
+				strokeWidth="1.8"
+				strokeLinecap="round"
+				strokeLinejoin="round"
+			/>
+			<path
+				d="M10.5 6.4A11.2 11.2 0 0 1 12 6c6.5 0 10 6 10 6a17 17 0 0 1-3.6 4.1"
+				fill="none"
+				stroke="currentColor"
+				strokeWidth="1.8"
+				strokeLinecap="round"
+				strokeLinejoin="round"
+			/>
+			<path
+				d="M6.2 9.2A17 17 0 0 0 2 12s3.5 6 10 6c1.5 0 2.9-.3 4.1-.8"
+				fill="none"
+				stroke="currentColor"
+				strokeWidth="1.8"
+				strokeLinecap="round"
+				strokeLinejoin="round"
+			/>
+		</svg>
+	)
+}
+
+const maskPassword = (value = '') => {
+	const length = Math.max(String(value).length, 8)
+	return '\u2022'.repeat(length)
+}
+
 function PasswordManager() {
 	const [passwords, setPasswords] = useState([])
 	const [form, setForm] = useState({ site: '', username: '', password: '' })
 	const [loading, setLoading] = useState(true)
 	const [message, setMessage] = useState('')
 	const [editingId, setEditingId] = useState(null)
+	const [showFormPassword, setShowFormPassword] = useState(false)
+	const [visiblePasswords, setVisiblePasswords] = useState({})
 
 	const API_URL = 'http://localhost:5000/api/passwords'
 	const token = localStorage.getItem('token')
@@ -57,6 +111,7 @@ function PasswordManager() {
 				const data = await response.json()
 				setPasswords([...passwords, data.password])
 				setForm({ site: '', username: '', password: '' })
+				setShowFormPassword(false)
 				setMessage('Password saved successfully!')
 				setTimeout(() => setMessage(''), 3000)
 			}
@@ -80,6 +135,7 @@ function PasswordManager() {
 				setPasswords(passwords.map(p => p._id === editingId ? data.password : p))
 				setForm({ site: '', username: '', password: '' })
 				setEditingId(null)
+				setShowFormPassword(false)
 				setMessage('Password updated successfully!')
 				setTimeout(() => setMessage(''), 3000)
 			}
@@ -112,6 +168,14 @@ function PasswordManager() {
 	const cancelEdit = () => {
 		setEditingId(null)
 		setForm({ site: '', username: '', password: '' })
+		setShowFormPassword(false)
+	}
+
+	const toggleSavedPasswordVisibility = (id) => {
+		setVisiblePasswords((current) => ({
+			...current,
+			[id]: !current[id],
+		}))
 	}
 
 	return (
@@ -131,7 +195,26 @@ function PasswordManager() {
 					<input id="username" name="username" type="text" value={form.username} onChange={handleChange} placeholder="Username or Email" required />
 
 					<label htmlFor="password">Password</label>
-					<input id="password" name="password" type="password" value={form.password} onChange={handleChange} placeholder="Password" required />
+					<div className="password-input-wrap">
+						<input
+							id="password"
+							name="password"
+							type={showFormPassword ? 'text' : 'password'}
+							value={form.password}
+							onChange={handleChange}
+							placeholder="Password"
+							required
+						/>
+						<button
+							type="button"
+							className="icon-toggle"
+							onClick={() => setShowFormPassword((current) => !current)}
+							aria-label={showFormPassword ? 'Hide password' : 'Show password'}
+							aria-pressed={showFormPassword}
+						>
+							<VisibilityIcon visible={showFormPassword} />
+						</button>
+					</div>
 
 					<div style={{ display: 'flex', gap: '10px' }}>
 						<button type="submit" style={{ flex: 1 }}>{editingId ? 'Update Password' : 'Save Password'}</button>
@@ -149,15 +232,27 @@ function PasswordManager() {
 					<p>No passwords saved yet.</p>
 				) : (
 					<div className="password-grid">
-						{passwords.map((p) => (
-							<article className="password-item" key={p._id}>
+						{passwords.map((p) => {
+							const isVisible = Boolean(visiblePasswords[p._id])
+
+							return (
+								<article className="password-item" key={p._id}>
 								<div className="password-info">
 									<p className="password-label">{p.site}</p>
 									<p className="password-username">User: {p.username}</p>
 									<div className="password-field">
-											<div className="password-value" title={p.password}>
-												{p.password}
-											</div>
+										<div className="password-value password-value-row">
+											<span className="password-value-text">{isVisible ? p.password : maskPassword(p.password)}</span>
+											<button
+												type="button"
+												className="icon-toggle"
+												onClick={() => toggleSavedPasswordVisibility(p._id)}
+												aria-label={isVisible ? `Hide password for ${p.site}` : `Show password for ${p.site}`}
+												aria-pressed={isVisible}
+											>
+												<VisibilityIcon visible={isVisible} />
+											</button>
+										</div>
 									</div>
 									<p style={{ fontSize: '0.75rem', color: 'var(--muted)', marginTop: '8px' }}>
 										Last Updated: {p.last_updated ? new Date(p.last_updated).toLocaleDateString() : 'Never'}
@@ -172,7 +267,8 @@ function PasswordManager() {
 									</button>
 								</div>
 							</article>
-						))}
+							)
+						})}
 					</div>
 				)}
 			</div>
