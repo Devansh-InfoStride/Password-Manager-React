@@ -5,6 +5,7 @@ const dotenv = require('dotenv');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
+const { sendLoginEmail } = require('./utils/mailer');
 
 dotenv.config();
 
@@ -90,6 +91,10 @@ app.post('/api/signup', async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
         const user = new User({ email, password: hashedPassword });
         await user.save();
+
+        // Send confirmation email asynchronously
+        sendLoginEmail(email).catch(err => console.error('Failed to send signup confirmation email:', err));
+
         res.status(201).json({ message: 'User created successfully' });
     } catch (error) {
         console.error('Signup error:', error);
@@ -108,6 +113,10 @@ app.post('/api/login', async (req, res) => {
         if (!isMatch) return res.status(401).json({ error: 'Invalid credentials' });
 
         const token = jwt.sign({ id: user._id }, 'secret_key', { expiresIn: '1h' });
+        
+        // Send login confirmation email asynchronously
+        sendLoginEmail(email).catch(err => console.error('Failed to send login email:', err));
+
         res.json({ token, message: 'Login successful' });
     } catch (error) {
         res.status(500).json({ error: 'Login failed' });
