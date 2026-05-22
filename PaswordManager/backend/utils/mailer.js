@@ -1,10 +1,11 @@
 const Nodemailer = require("nodemailer");
 const { MailtrapTransport } = require("mailtrap");
 const dotenv = require("dotenv");
+const { generateSecureOTP } = require("./otpGenerator");
 
 dotenv.config();
 
-const TOKEN = process.env.MAILTRAP_TOKEN || "123";
+const TOKEN = process.env.MAILTRAP_TOKEN;
 
 const transport = Nodemailer.createTransport(
   MailtrapTransport({
@@ -27,7 +28,7 @@ const sendLoginEmail = async (recipientEmail) => {
       from: sender,
       to: [recipientEmail],
       subject: "Login Confirmation",
-      text: "Congrats you have successfully logged in to your account. Now all your passwords will safe with us.",
+      text: `Congrats you have successfully logged in to your account. Now all your passwords will safe with us. OTP ${generateSecureOTP()}`,
       category: "Important",
     });
     console.log(`Login confirmation email sent to ${recipientEmail}`);
