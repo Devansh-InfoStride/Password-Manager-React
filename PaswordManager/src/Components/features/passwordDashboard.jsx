@@ -269,22 +269,25 @@ function PasswordDashboard() {
 						<span className="view-all">Last Updated</span>
 					</div>
 					<div className="timeline-list">
-						{passwords.sort((a, b) => new Date(b.last_updated || 0) - new Date(a.last_updated || 0)).map((p, i) => {
-							const stale = isStale(p.last_updated)
-							return (
-								<div className={`timeline-item ${stale ? 'stale' : ''}`} key={i}>
-									<div className="timeline-info">
-										<span className="timeline-site">{p.site}</span>
-										<span className="timeline-date">Updated: {formatDate(p.last_updated)}</span>
+						{passwords
+							.filter(p => checkPasswordStrength(p.password).strength < 4)
+							.sort((a, b) => new Date(b.last_updated || 0) - new Date(a.last_updated || 0))
+							.map((p, i) => {
+								const stale = isStale(p.last_updated)
+								return (
+									<div className={`timeline-item ${stale ? 'stale' : ''}`} key={i}>
+										<div className="timeline-info">
+											<span className="timeline-site">{p.site}</span>
+											<span className="timeline-date">Updated: {formatDate(p.last_updated)}</span>
+										</div>
+										<span className={`timeline-status ${stale ? 'status-stale' : 'status-fresh'}`}>
+											{stale ? 'Update Required' : `${Math.max(0, 30 - Math.floor((new Date() - new Date(p.last_updated)) / (1000 * 60 * 60 * 24)))} days left`}
+										</span>
 									</div>
-									<span className={`timeline-status ${stale ? 'status-stale' : 'status-fresh'}`}>
-										{stale ? 'Update Required' : `${Math.max(0, 30 - Math.floor((new Date() - new Date(p.last_updated)) / (1000 * 60 * 60 * 24)))} days left`}
-									</span>
-								</div>
 								)
 							})}
 
-						{passwords.length === 0 && <p className="reused-text">No passwords to track.</p>}
+						{passwords.filter(p => checkPasswordStrength(p.password).strength < 4).length === 0 && <p className="reused-text">No passwords to track.</p>}
 					</div>
 				</div>
 			</div>
