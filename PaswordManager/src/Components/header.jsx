@@ -2,11 +2,6 @@ import { Link, NavLink } from 'react-router-dom'
 import logo from '../assets/Logo.png'
 
 function Header() {
-	const handleLogout = () => {
-		localStorage.removeItem('token');
-		window.location.href = 'http://localhost:5173/login';
-	};
-
 	return (
 		<header className="site-header">
 			<nav className="nav-container">
@@ -34,9 +29,7 @@ function Header() {
 						<NavLink to="/generator">Generator</NavLink>
 					</li>
 					<li>
-						<button onClick={handleLogout} style={{ background: 'transparent', color: 'var(--muted)', padding: '10px 14px', borderRadius: '999px', fontWeight: '600', cursor: 'pointer', border: 'none' }}>
-							Logout
-						</button>
+						<NavLink to="/profile">Profile</NavLink>
 					</li>
 				</ul>
 			</nav>

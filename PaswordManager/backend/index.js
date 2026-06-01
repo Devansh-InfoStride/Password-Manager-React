@@ -5,6 +5,8 @@ const dotenv = require("dotenv");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
+const multer = require("multer");
+const path = require("path");
 const { sendOTPEmail } = require("./utils/mailer");
 const OTP = require("./utils/otpDB");
 const { generateSecureOTP } = require("./utils/otpGenerator");
@@ -14,6 +16,18 @@ dotenv.config();
 const app = express();
 app.use(express.json());
 app.use(cors());
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
+// Multer Configuration for Profile Photos
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, "uploads/");
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + path.extname(file.originalname));
+    }
+});
+const upload = multer({ storage });
 
 // Encryption Configuration
 const ALGORITHM = "aes-256-cbc";
@@ -63,7 +77,9 @@ mongoose.connect(MONGO_URI)
 
 const userSchema = new mongoose.Schema({
     email: { type: String, required: true, unique: true },
-    password: { type: String, required: true }
+    password: { type: String, required: true },
+    name: { type: String, default: "User" },
+    profilePhoto: { type: String, default: "" }
 });
 
 const User = mongoose.model("User", userSchema);
@@ -77,6 +93,47 @@ const passwordSchema = new mongoose.Schema({
 });
 
 const StoredPassword = mongoose.model("StoredPassword", passwordSchema);
+
+// User Profile Routes
+app.get("/api/profile", authenticateToken, async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id).select("-password");
+        if (!user) return res.status(404).json({ error: "User not found" });
+        res.json(user);
+    } catch (error) {
+        res.status(500).json({ error: "Failed to fetch profile" });
+    }
+});
+
+app.put("/api/profile", authenticateToken, upload.single("profilePhoto"), async (req, res) => {
+    try {
+        const { name } = req.body;
+        const updateData = {};
+        if (name) updateData.name = name;
+        if (req.file) updateData.profilePhoto = `/uploads/${req.file.filename}`;
+
+        const user = await User.findByIdAndUpdate(req.user.id, updateData, { new: true }).select("-password");
+        res.json({ message: "Profile updated successfully", user });
+    } catch (error) {
+        res.status(500).json({ error: "Failed to update profile" });
+    }
+});
+
+app.post("/api/profile/change-password", authenticateToken, async (req, res) => {
+    try {
+        const { currentPassword, newPassword } = req.body;
+        const user = await User.findById(req.user.id);
+        
+        const isMatch = await bcrypt.compare(currentPassword, user.password);
+        if (!isMatch) return res.status(401).json({ error: "Invalid current password" });
+
+        user.password = await bcrypt.hash(newPassword, 10);
+        await user.save();
+        res.json({ message: "Password changed successfully" });
+    } catch (error) {
+        res.status(500).json({ error: "Failed to change password" });
+    }
+});
 
 // Signup Route
 app.post("/api/signup", async (req, res) => {

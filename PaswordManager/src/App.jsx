@@ -6,6 +6,7 @@ import PasswordStrengthChecker from './Components/features/passwordStrengthCheck
 import PasswordGenerator from './Components/features/passwordGenerator'
 import PasswordManager from './Components/features/passwordManager'
 import PasswordDashboard from './Components/features/passwordDashboard'
+import UserProfile from './Components/features/userProfile'
 import './App.css'
 
 const homeCards = [
@@ -107,6 +108,7 @@ function App() {
 				<Route path="checker" element={<PasswordStrengthChecker />} />
 				<Route path="generator" element={<PasswordGenerator />} />
 				<Route path="manage" element={<PasswordManager />} />
+				<Route path="profile" element={<UserProfile />} />
 			</Route>
 			<Route path="*" element={<Navigate to="/" replace />} />
 		</Routes>
