@@ -4,6 +4,10 @@ import "../styles/homepage.css";
 
 function Signup() {
   const [showPassword, setShowPassword] = useState(false);
+  const [otpSent, setOtpSent] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [otp, setOtp] = useState("");
 
   const togglePassword = () => {
     setShowPassword(!showPassword);
@@ -11,20 +15,22 @@ function Signup() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const formData = new FormData(e.target);
-    const email = formData.get('email');
-    const password = formData.get('password');
 
     try {
       const response = await fetch('http://localhost:5000/api/signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password, otp: otpSent ? otp : undefined }),
       });
       const data = await response.json();
       if (response.ok) {
-        alert('Signup successful! Please login.');
-        window.location.href = '/login';
+        if (data.otp_sent) {
+          setOtpSent(true);
+          alert('OTP sent to your email!');
+        } else {
+          alert('Signup successful! Please login.');
+          window.location.href = '/login';
+        }
       } else {
         alert(data.error);
       }
@@ -43,22 +49,40 @@ function Signup() {
       </div>
       <div className="signupForm">
         <form onSubmit={handleSubmit}>
-          <input type="email" name="email" placeholder="Email" required />
-          <input
-            type={showPassword ? "text" : "password"}
-            id="password"
-            name="password"
-            placeholder="Enter a strong password"
-            required
-          />
-          <label htmlFor="password" className="formHeading">
+          {!otpSent ? (
+            <>
+              <input 
+                type="email" 
+                placeholder="Email" 
+                required 
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Enter a strong password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              <label className="formHeading">
+                <input 
+                  type="checkbox" 
+                  checked={showPassword} 
+                  onChange={togglePassword} 
+                /> Show Password
+              </label>
+            </>
+          ) : (
             <input 
-              type="checkbox" 
-              checked={showPassword} 
-              onChange={togglePassword} 
-            /> Show Password
-          </label>
-          <button type="submit">Sign Up</button>
+              type="text" 
+              placeholder="Enter OTP" 
+              required 
+              value={otp}
+              onChange={(e) => setOtp(e.target.value)}
+            />
+          )}
+          <button type="submit">{otpSent ? "Verify OTP" : "Sign Up"}</button>
         </form>
         <p>
           Existing user? <Link to="/login">Login here</Link>

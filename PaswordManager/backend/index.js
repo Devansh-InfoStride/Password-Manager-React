@@ -5,7 +5,7 @@ const dotenv = require("dotenv");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
-const { sendLoginEmail } = require("./utils/mailer");
+const { sendOTPEmail } = require("./utils/mailer");
 const OTP = require("./utils/otpDB");
 const { generateSecureOTP } = require("./utils/otpGenerator");
 
@@ -81,61 +81,79 @@ const StoredPassword = mongoose.model("StoredPassword", passwordSchema);
 // Signup Route
 app.post("/api/signup", async (req, res) => {
     try {
-        const { email, password } = req.body;
+        const { email, password, otp } = req.body;
         if (!email || !password) {
             return res.status(400).json({ error: "Email and password are required" });
         }
+
         const existingUser = await User.findOne({ email });
         if (existingUser) {
             return res.status(409).json({ error: "Email already in use" });
         }
 
+        if (!otp) {
+            // Step 1: Send OTP
+            const generatedOtp = generateSecureOTP().toString();
+            await OTP.findOneAndUpdate(
+                { email },
+                { otp: generatedOtp, createdAt: new Date() },
+                { upsert: true, new: true }
+            );
+            await sendOTPEmail(email, generatedOtp);
+            return res.json({ message: "OTP sent to your email", otp_sent: true });
+        }
+
+        // Step 2: Verify OTP
+        const otpRecord = await OTP.findOne({ email, otp });
+        if (!otpRecord) {
+            return res.status(400).json({ error: "Invalid or expired OTP" });
+        }
+
+        // OTP verified, delete it and create user
+        await OTP.deleteOne({ _id: otpRecord._id });
         const hashedPassword = await bcrypt.hash(password, 10);
         const user = new User({ email, password: hashedPassword });
         await user.save();
 
-        // Send confirmation email asynchronously
-        sendLoginEmail(email).catch(err => console.error("Failed to send signup confirmation email:", err));
-
         res.status(201).json({ message: "User created successfully" });
     } catch (error) {
         console.error("Signup error:", error);
-        res.status(400).json({ error: "Signup failed" });
+        res.status(500).json({ error: "Signup failed" });
     }
 });
 
 // Login Route
 app.post("/api/login", async (req, res) => {
     try {
-        const { email, password } = req.body;
+        const { email, password, otp } = req.body;
         const user = await User.findOne({ email });
         if (!user) return res.status(404).json({ error: "User not found" });
 
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) return res.status(401).json({ error: "Invalid credentials" });
 
-        // Generate OTP
-        const generatedOtp = generateSecureOTP().toString();
-
-        // Save OTP to DB (Update if exists, otherwise create)
-        try {
-            const otpResult = await OTP.findOneAndUpdate(
-                { userId: user._id },
+        if (!otp) {
+            // Step 1: Send OTP
+            const generatedOtp = generateSecureOTP().toString();
+            await OTP.findOneAndUpdate(
+                { email },
                 { otp: generatedOtp, createdAt: new Date() },
                 { upsert: true, new: true }
             );
-            console.log("OTP saved successfully:", otpResult);
-        } catch (otpError) {
-            console.error("Failed to save OTP:", otpError);
-            return res.status(500).json({ error: "Failed to generate OTP" });
+            await sendOTPEmail(email, generatedOtp);
+            return res.json({ message: "OTP sent to your email", otp_sent: true });
         }
 
-        const token = jwt.sign({ id: user._id }, "secret_key", { expiresIn: "1h" });
-        
-        // Send login confirmation email asynchronously
-        sendLoginEmail(email).catch(err => console.error("Failed to send login email:", err));
+        // Step 2: Verify OTP
+        const otpRecord = await OTP.findOne({ email, otp });
+        if (!otpRecord) {
+            return res.status(400).json({ error: "Invalid or expired OTP" });
+        }
 
-        res.json({ token, message: "Login successful", otp_sent: true });
+        // OTP verified, delete it and return token
+        await OTP.deleteOne({ _id: otpRecord._id });
+        const token = jwt.sign({ id: user._id }, "secret_key", { expiresIn: "1h" });
+        res.json({ token, message: "Login successful" });
     } catch (error) {
         console.error("Login error:", error);
         res.status(500).json({ error: "Login failed" });

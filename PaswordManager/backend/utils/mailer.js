@@ -1,7 +1,6 @@
 const Nodemailer = require("nodemailer");
 const { MailtrapTransport } = require("mailtrap");
 const dotenv = require("dotenv");
-const { generateSecureOTP } = require("./otpGenerator");
 
 dotenv.config();
 
@@ -19,24 +18,25 @@ const sender = {
 };
 
 /**
- * Sends a login confirmation email.
- * @param {string} recipientEmail - The email of the user who logged in.
+ * Sends an OTP email.
+ * @param {string} recipientEmail - The email of the user.
+ * @param {string} otp - The OTP to send.
  */
-const sendLoginEmail = async (recipientEmail) => {
+const sendOTPEmail = async (recipientEmail, otp) => {
   try {
     await transport.sendMail({
       from: sender,
       to: [recipientEmail],
-      subject: "Login Confirmation",
-      text: `Congrats you have successfully logged in to your account. Now all your passwords will safe with us. OTP ${generateSecureOTP()}`,
+      subject: "Verification OTP",
+      text: `Your OTP for verification is: ${otp}. It will expire in 5 minutes.`,
       category: "Important",
     });
-    console.log(`Login confirmation email sent to ${recipientEmail}`);
+    console.log(`OTP email sent to ${recipientEmail}`);
   } catch (error) {
     console.error("Error sending email:", error);
   }
 };
 
 module.exports = {
-  sendLoginEmail,
+  sendOTPEmail,
 };

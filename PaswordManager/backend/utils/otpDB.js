@@ -1,9 +1,8 @@
 const mongoose = require('mongoose');
 
 const otpSchema = new mongoose.Schema({
-    userId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
+    email: {
+        type: String,
         required: true
     },
     otp: {
@@ -17,8 +16,8 @@ const otpSchema = new mongoose.Schema({
     }
 });
 
-// Add index for userId (remove unique to avoid TTL race conditions)
-otpSchema.index({ userId: 1 });
+// Add index for email
+otpSchema.index({ email: 1 });
 
 const OTP = mongoose.model('OTP', otpSchema);
 
