@@ -1,7 +1,7 @@
 
 export const logout = () => {
     localStorage.removeItem('token');
-    window.location.href = 'http://localhost:5174';
+    window.location.href = 'http://localhost:5174/login';
 };
 
 export const fetchWithAuth = async (url, options = {}) => {

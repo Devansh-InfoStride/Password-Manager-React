@@ -30,7 +30,7 @@ function Login() {
                 } else {
                     localStorage.setItem('token', data.token);
                     alert('Login successful! Redirecting to Password Manager...');
-                    const redirectUrl = `http://localhost:5174/?token=${encodeURIComponent(data.token)}`;
+                    const redirectUrl = `http://localhost:5173/?token=${encodeURIComponent(data.token)}`;
                     window.location.href = redirectUrl;
                 }
             } else {

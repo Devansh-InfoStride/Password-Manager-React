@@ -96,7 +96,7 @@ function App() {
 		const token = localStorage.getItem('token');
 		if (!token) {
 			// Redirect to the Login application if no token is found
-			window.location.href = 'http://localhost:5174';
+			window.location.href = 'http://localhost:5174/login';
 		}
   }, []);
 
