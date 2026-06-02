@@ -6,6 +6,7 @@ import '../../styles/passwordDashboard.css'
 
 function PasswordDashboard() {
 	const [passwords, setPasswords] = useState([])
+	const [sharedCount, setSharedCount] = useState(0)
 	const [stats, setStats] = useState({
 		total: 0,
 		strong: 0,
@@ -23,6 +24,7 @@ function PasswordDashboard() {
 
 	useEffect(() => {
 		fetchPasswords()
+		fetchSharedCount()
 	}, [])
 
 	const fetchPasswords = async () => {
@@ -37,6 +39,18 @@ function PasswordDashboard() {
 			console.error('Error fetching passwords', error)
 		} finally {
 			setLoading(false)
+		}
+	}
+
+	const fetchSharedCount = async () => {
+		try {
+			const response = await fetchWithAuth('http://localhost:5000/api/share/received')
+			if (response && response.ok) {
+				const data = await response.json()
+				setSharedCount(data.length)
+			}
+		} catch (error) {
+			console.error('Error fetching shared count', error)
 		}
 	}
 
@@ -207,6 +221,19 @@ function PasswordDashboard() {
 					<div className="stat-trend trend-up">
 						<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
 						Overall Vault Size
+					</div>
+				</div>
+
+				<div className="stat-card">
+					<div className="stat-icon-wrapper purple">
+						<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+					</div>
+					<div className="stat-content">
+						<span className="stat-value">{sharedCount}</span>
+						<span className="stat-label">Shared With Me</span>
+					</div>
+					<div className="stat-trend trend-up">
+						Incoming Access
 					</div>
 				</div>
 
