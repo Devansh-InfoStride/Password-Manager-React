@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { fetchWithAuth } from '../../utils/auth'
 
 function VisibilityIcon({ visible }) {
 	if (visible) {
@@ -62,7 +63,6 @@ function PasswordManager() {
 	const [visiblePasswords, setVisiblePasswords] = useState({})
 
 	const API_URL = 'http://localhost:5000/api/passwords'
-	const token = localStorage.getItem('token')
 
 	useEffect(() => {
 		fetchPasswords()
@@ -70,10 +70,8 @@ function PasswordManager() {
 
 	const fetchPasswords = async () => {
 		try {
-			const response = await fetch(API_URL, {
-				headers: { Authorization: `Bearer ${token}` }
-			})
-			if (response.ok) {
+			const response = await fetchWithAuth(API_URL)
+			if (response && response.ok) {
 				const data = await response.json()
 				setPasswords(data)
 			}
@@ -99,15 +97,14 @@ function PasswordManager() {
 
 	const handleSave = async () => {
 		try {
-			const response = await fetch(API_URL, {
+			const response = await fetchWithAuth(API_URL, {
 				method: 'POST',
 				headers: {
-					'Content-Type': 'application/json',
-					Authorization: `Bearer ${token}`
+					'Content-Type': 'application/json'
 				},
 				body: JSON.stringify(form)
 			})
-			if (response.ok) {
+			if (response && response.ok) {
 				const data = await response.json()
 				setPasswords([...passwords, data.password])
 				setForm({ site: '', username: '', password: '' })
@@ -122,15 +119,14 @@ function PasswordManager() {
 
 	const handleUpdate = async () => {
 		try {
-			const response = await fetch(`${API_URL}/${editingId}`, {
+			const response = await fetchWithAuth(`${API_URL}/${editingId}`, {
 				method: 'PUT',
 				headers: {
-					'Content-Type': 'application/json',
-					Authorization: `Bearer ${token}`
+					'Content-Type': 'application/json'
 				},
 				body: JSON.stringify(form)
 			})
-			if (response.ok) {
+			if (response && response.ok) {
 				const data = await response.json()
 				setPasswords(passwords.map(p => p._id === editingId ? data.password : p))
 				setForm({ site: '', username: '', password: '' })
@@ -147,11 +143,10 @@ function PasswordManager() {
 	const handleDelete = async (id) => {
 		if (!window.confirm('Are you sure you want to delete this password?')) return
 		try {
-			const response = await fetch(`${API_URL}/${id}`, {
-				method: 'DELETE',
-				headers: { Authorization: `Bearer ${token}` }
+			const response = await fetchWithAuth(`${API_URL}/${id}`, {
+				method: 'DELETE'
 			})
-			if (response.ok) {
+			if (response && response.ok) {
 				setPasswords(passwords.filter((p) => p._id !== id))
 			}
 		} catch (error) {

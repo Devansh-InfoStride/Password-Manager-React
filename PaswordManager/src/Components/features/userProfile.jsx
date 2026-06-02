@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { fetchWithAuth, logout } from '../../utils/auth';
 import '../../styles/userProfile.css';
 
 const UserProfile = () => {
@@ -24,12 +25,9 @@ const UserProfile = () => {
 
     const fetchProfile = async () => {
         try {
-            const token = localStorage.getItem('token');
-            const response = await fetch('http://localhost:5000/api/profile', {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            const data = await response.json();
-            if (response.ok) {
+            const response = await fetchWithAuth('http://localhost:5000/api/profile');
+            if (response && response.ok) {
+                const data = await response.json();
                 setProfile(data);
                 setName(data.name);
                 setPhotoPreview(data.profilePhoto ? `http://localhost:5000${data.profilePhoto}` : null);
@@ -56,20 +54,18 @@ const UserProfile = () => {
         }
 
         try {
-            const token = localStorage.getItem('token');
-            const response = await fetch('http://localhost:5000/api/profile', {
+            const response = await fetchWithAuth('http://localhost:5000/api/profile', {
                 method: 'PUT',
-                headers: { 'Authorization': `Bearer ${token}` },
                 body: formData
             });
-            const data = await response.json();
-            if (response.ok) {
+            if (response && response.ok) {
                 setMessage({ text: 'Profile updated successfully! Reloading...', type: 'success' });
                 // Hard reload to ensure all components (Header, etc.) see the changes
                 setTimeout(() => {
                     window.location.reload();
                 }, 1000);
-            } else {
+            } else if (response) {
+                const data = await response.json();
                 setMessage({ text: data.error, type: 'error' });
             }
         } catch (error) {
@@ -85,23 +81,21 @@ const UserProfile = () => {
         }
 
         try {
-            const token = localStorage.getItem('token');
-            const response = await fetch('http://localhost:5000/api/profile/change-password', {
+            const response = await fetchWithAuth('http://localhost:5000/api/profile/change-password', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
                     currentPassword: passwords.currentPassword,
                     newPassword: passwords.newPassword
                 })
             });
-            const data = await response.json();
-            if (response.ok) {
+            if (response && response.ok) {
                 setMessage({ text: 'Password changed successfully!', type: 'success' });
                 setPasswords({ currentPassword: '', newPassword: '', confirmPassword: '' });
-            } else {
+            } else if (response) {
+                const data = await response.json();
                 setMessage({ text: data.error, type: 'error' });
             }
         } catch (error) {
@@ -110,8 +104,7 @@ const UserProfile = () => {
     };
 
     const handleLogout = () => {
-        localStorage.removeItem('token');
-        window.location.href = 'http://localhost:5173/login';
+        logout();
     };
 
     return (

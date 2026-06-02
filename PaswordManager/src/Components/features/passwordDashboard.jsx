@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import Chart from 'react-apexcharts'
 import { checkPasswordStrength, getStrengthInfo } from '../../utils/passwordStrength'
+import { fetchWithAuth } from '../../utils/auth'
 import '../../styles/passwordDashboard.css'
 
 function PasswordDashboard() {
@@ -19,7 +20,6 @@ function PasswordDashboard() {
 	const [loading, setLoading] = useState(true)
 
 	const API_URL = 'http://localhost:5000/api/passwords'
-	const token = localStorage.getItem('token')
 
 	useEffect(() => {
 		fetchPasswords()
@@ -27,10 +27,8 @@ function PasswordDashboard() {
 
 	const fetchPasswords = async () => {
 		try {
-			const response = await fetch(API_URL, {
-				headers: { Authorization: `Bearer ${token}` }
-			})
-			if (response.ok) {
+			const response = await fetchWithAuth(API_URL)
+			if (response && response.ok) {
 				const data = await response.json()
 				setPasswords(data)
 				calculateStats(data)
