@@ -1,0 +1,117 @@
+body {
+  width: 350px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 15px;
+  background-color: #f8fafc;
+  color: #1e293b;
+}
+
+.view {
+  display: flex;
+  flex-direction: column;
+}
+
+.hidden {
+  display: none !important;
+}
+
+h2, h3 {
+  margin-top: 0;
+  color: #2563eb;
+}
+
+.form-group {
+  margin-bottom: 12px;
+}
+
+label {
+  display: block;
+  font-size: 14px;
+  margin-bottom: 4px;
+  font-weight: 500;
+}
+
+input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+button {
+  width: 100%;
+  padding: 10px;
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.2s;
+}
+
+button:hover {
+  background-color: #1d4ed8;
+}
+
+.error {
+  color: #ef4444;
+  font-size: 13px;
+  margin-top: 8px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+#logout-btn {
+  width: auto;
+  padding: 5px 10px;
+  font-size: 12px;
+  background-color: #64748b;
+}
+
+#search {
+  margin-bottom: 15px;
+}
+
+.password-list {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.password-item {
+  background: white;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.password-info {
+  flex: 1;
+}
+
+.site-name {
+  font-weight: 600;
+  display: block;
+}
+
+.username {
+  font-size: 12px;
+  color: #64748b;
+}
+
+.fill-btn {
+  width: auto;
+  padding: 6px 12px;
+  font-size: 12px;
+}
