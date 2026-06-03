@@ -65,7 +65,62 @@ function fillForm(username, password) {
         usernameField.dispatchEvent(new Event('change', { bubbles: true }));
     }
 
+    // Auto-submit logic
+    setTimeout(() => {
+        const submitBtn = findSubmitButton(passwordField);
+        if (submitBtn) {
+            submitBtn.click();
+        } else {
+            // Fallback: try to submit the form directly if button not found
+            const form = passwordField.closest('form');
+            if (form) form.submit();
+        }
+    }, 500); // Small delay to ensure events are processed
+
     return true;
+}
+
+function findSubmitButton(passwordField) {
+    const form = passwordField.closest('form');
+    if (form) {
+        // 1. Look for explicit submit buttons
+        const submitBtn = form.querySelector('button[type="submit"], input[type="submit"]');
+        if (submitBtn) return submitBtn;
+
+        // 2. Look for buttons with "login", "sign in", "submit" text
+        const buttons = form.querySelectorAll('button, input[type="button"]');
+        for (const btn of buttons) {
+            const text = (btn.innerText || btn.value || '').toLowerCase();
+            if (text.includes('log') || text.includes('sign') || text.includes('submit') || text.includes('enter')) {
+                return btn;
+            }
+        }
+    }
+
+    // 3. Search nearby buttons if not in a form
+    const allButtons = Array.from(document.querySelectorAll('button, input[type="submit"], input[type="button"]'));
+    const passRect = passwordField.getBoundingClientRect();
+    
+    // Find button closest to the password field (usually below it)
+    let closestBtn = null;
+    let minDistance = Infinity;
+
+    allButtons.forEach(btn => {
+        const btnRect = btn.getBoundingClientRect();
+        // Check if button is below and within reasonable distance
+        if (btnRect.top >= passRect.bottom && btnRect.top <= passRect.bottom + 200) {
+            const distance = Math.sqrt(
+                Math.pow(btnRect.left - passRect.left, 2) + 
+                Math.pow(btnRect.top - passRect.top, 2)
+            );
+            if (distance < minDistance) {
+                minDistance = distance;
+                closestBtn = btn;
+            }
+        }
+    });
+
+    return closestBtn;
 }
 
 function applyProtection(field) {
