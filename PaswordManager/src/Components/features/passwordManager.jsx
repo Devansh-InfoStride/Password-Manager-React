@@ -79,6 +79,7 @@ function PasswordManager() {
 	const API_URL = '/api/passwords'
 
 	useEffect(() => {
+		console.log(`[PasswordManager] View: ${view}, Locked: ${isLocked}`)
 		if (view === 'my-passwords') {
 			fetchPasswords()
 		} else if (view === 'shared-with-me') {
@@ -86,7 +87,7 @@ function PasswordManager() {
 		} else if (view === 'shared-by-me') {
 			fetchSentSharedPasswords()
 		}
-	}, [view])
+	}, [view, isLocked])
 
 	const fetchPasswords = async () => {
 		try {
@@ -94,6 +95,7 @@ function PasswordManager() {
 			const response = await fetchWithAuth(API_URL)
 			if (response && response.ok) {
 				const data = await response.json()
+				console.log(`[PasswordManager] Fetched ${data.length} passwords`)
 				setPasswords(data)
 			}
 		} catch (error) {
@@ -154,7 +156,6 @@ function PasswordManager() {
 		setIsSharing(true)
 		setMessage('')
 		try {
-			// 1. Fetch receiver's public key
 			const keyRes = await fetchWithAuth(`/api/users/public-key/${receiverId}`)
 			if (!keyRes || !keyRes.ok) {
 				const errorData = await keyRes.json()
@@ -162,10 +163,8 @@ function PasswordManager() {
 			}
 			const { publicKey: receiverPubKey } = await keyRes.json()
 
-			// 2. Encrypt password with receiver's public key
 			const encryptedPassword = await encryptWithPublicKey(sharingPassword.password, receiverPubKey)
 
-			// 3. Send to server
 			const shareRes = await fetchWithAuth('/api/share', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },

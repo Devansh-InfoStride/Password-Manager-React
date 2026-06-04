@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import Chart from 'react-apexcharts'
 import { checkPasswordStrength, getStrengthInfo } from '../../utils/passwordStrength'
 import { fetchWithAuth } from '../../utils/auth'
+import { useShare } from '../../context/ShareContext'
 import '../../styles/passwordDashboard.css'
 
 function PasswordDashboard() {
@@ -22,11 +23,14 @@ function PasswordDashboard() {
 	const [loading, setLoading] = useState(true)
 
 	const API_URL = '/api/passwords'
+	const { isLocked } = useShare()
 
 	useEffect(() => {
+		console.log(`[PasswordDashboard] Refreshing. Locked: ${isLocked}`);
+
 		fetchPasswords()
 		fetchSharedCount()
-	}, [])
+	}, [isLocked])
 
 	const fetchPasswords = async () => {
 		try {
