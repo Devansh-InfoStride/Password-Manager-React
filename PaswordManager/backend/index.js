@@ -31,25 +31,45 @@ const upload = multer({ storage });
 
 // Encryption Configuration
 const ALGORITHM = "aes-256-cbc";
-const SECRET_KEY = process.env.ENCRYPTION_KEY || "v6yB$E&H)MbQeThWmZq4t7w!z%C*F-Ja"; // 32 characters
+const SECRET_KEY = process.env.ENCRYPTION_KEY || "v6yB$E&H)MbQeThWmZq4t7w!z%C*F-Ja";
 const IV_LENGTH = 16;
 
+console.log(`Encryption Key Loaded: ${SECRET_KEY ? "YES" : "NO"}, Length: ${SECRET_KEY ? SECRET_KEY.length : 0}`);
+
 const encrypt = (text) => {
-    const iv = crypto.randomBytes(IV_LENGTH);
-    const cipher = crypto.createCipheriv(ALGORITHM, Buffer.from(SECRET_KEY), iv);
-    let encrypted = cipher.update(text);
-    encrypted = Buffer.concat([encrypted, cipher.final()]);
-    return iv.toString("hex") + ":" + encrypted.toString("hex");
+    try {
+        const iv = crypto.randomBytes(IV_LENGTH);
+        const cipher = crypto.createCipheriv(ALGORITHM, Buffer.from(SECRET_KEY), iv);
+        let encrypted = cipher.update(text);
+        encrypted = Buffer.concat([encrypted, cipher.final()]);
+        return iv.toString("hex") + ":" + encrypted.toString("hex");
+    } catch (err) {
+        console.error("Encryption error:", err.message);
+        throw err;
+    }
 };
 
 const decrypt = (text) => {
-    const textParts = text.split(":");
-    const iv = Buffer.from(textParts.shift(), "hex");
-    const encryptedText = Buffer.from(textParts.join(":"), "hex");
-    const decipher = crypto.createDecipheriv(ALGORITHM, Buffer.from(SECRET_KEY), iv);
-    let decrypted = decipher.update(encryptedText);
-    decrypted = Buffer.concat([decrypted, decipher.final()]);
-    return decrypted.toString();
+    if (!text || !text.includes(":")) return text;
+    try {
+        const textParts = text.split(":");
+        const ivHex = textParts.shift();
+        const encryptedHex = textParts.join(":");
+        
+        const iv = Buffer.from(ivHex, "hex");
+        const encryptedText = Buffer.from(encryptedHex, "hex");
+        
+        if (iv.length !== 16) {
+            throw new Error(`Invalid IV length: ${iv.length}`);
+        }
+
+        const decipher = crypto.createDecipheriv(ALGORITHM, Buffer.from(SECRET_KEY), iv);
+        let decrypted = decipher.update(encryptedText);
+        decrypted = Buffer.concat([decrypted, decipher.final()]);
+        return decrypted.toString();
+    } catch (err) {
+        throw new Error(`Decryption failed: ${err.message}`);
+    }
 };
 
 // Middleware
@@ -117,9 +137,6 @@ const sharedPasswordSchema = new mongoose.Schema({
 });
 
 const SharedPassword = mongoose.model("SharedPassword", sharedPasswordSchema);
-
-// User Profile Routes
-// ... existing profile routes ...
 
 // Key Management Routes
 app.post("/api/keys", authenticateToken, async (req, res) => {
@@ -201,7 +218,7 @@ app.delete("/api/share/:id", authenticateToken, async (req, res) => {
     }
 });
 
-// User Profile Routes (continued)
+// User Profile Routes
 app.get("/api/profile", authenticateToken, async (req, res) => {
     try {
         const user = await User.findById(req.user.id).select("-password");
@@ -331,17 +348,40 @@ app.post("/api/login", async (req, res) => {
 // Password Management Routes
 app.get("/api/passwords", authenticateToken, async (req, res) => {
     try {
+        if (!req.user || !req.user.id) {
+            console.error("[GET /api/passwords] Missing User ID in token");
+            return res.status(401).json({ error: "Invalid token payload" });
+        }
+
+        console.log(`[GET /api/passwords] Fetching for User ID: ${req.user.id}`);
         const passwords = await StoredPassword.find({ userId: req.user.id });
-        const decryptedPasswords = passwords.map(p => ({
-            _id: p._id,
-            site: p.site,
-            username: p.username,
-            password: decrypt(p.password),
-            last_updated: p.last_updated
-        }));
+        console.log(`[GET /api/passwords] Found ${passwords.length} passwords`);
+        
+        const decryptedPasswords = passwords.map(p => {
+            try {
+                return {
+                    _id: p._id,
+                    site: p.site,
+                    username: p.username,
+                    password: decrypt(p.password),
+                    last_updated: p.last_updated
+                };
+            } catch (decErr) {
+                console.warn(`[GET /api/passwords] Decryption failed for ${p.site} (${p._id}): ${decErr.message}`);
+                return {
+                    _id: p._id,
+                    site: p.site,
+                    username: p.username,
+                    password: `[DECRYPT_ERROR] ${p.password}`,
+                    last_updated: p.last_updated
+                };
+            }
+        });
+        
         res.json(decryptedPasswords);
     } catch (error) {
-        res.status(500).json({ error: "Failed to fetch passwords" });
+        console.error("[GET /api/passwords] Server Error:", error);
+        res.status(500).json({ error: "Internal server error", details: error.message });
     }
 });
 
@@ -368,6 +408,7 @@ app.post("/api/passwords", authenticateToken, async (req, res) => {
             } 
         });
     } catch (error) {
+        console.error("Save error:", error);
         res.status(500).json({ error: "Failed to save password" });
     }
 });
@@ -377,6 +418,7 @@ app.delete("/api/passwords/:id", authenticateToken, async (req, res) => {
         await StoredPassword.findOneAndDelete({ _id: req.params.id, userId: req.user.id });
         res.json({ message: "Password deleted successfully" });
     } catch (error) {
+        console.error("Delete error:", error);
         res.status(500).json({ error: "Failed to delete password" });
     }
 });
