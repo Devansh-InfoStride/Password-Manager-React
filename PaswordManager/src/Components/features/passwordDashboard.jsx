@@ -125,7 +125,7 @@ function PasswordDashboard() {
 	// Chart Options
 	const strengthDonutOptions = {
 		labels: ['Strong', 'Medium', 'Weak'],
-		colors: ['#22c55e', '#f59e0b', '#f97316'],
+		colors: ['#22c55e', '#f59e0b', '#ff0000d5'],
 		legend: { position: 'right', fontSize: '14px', markers: { radius: 12 } },
 		plotOptions: {
 			pie: {
@@ -148,7 +148,7 @@ function PasswordDashboard() {
 
 	const lengthBarOptions = {
 		chart: { toolbar: { show: false } },
-		colors: ['#818cf8'],
+		colors: ['#5d6df8'],
 		plotOptions: {
 			bar: {
 				borderRadius: 6,
@@ -171,7 +171,7 @@ function PasswordDashboard() {
 
 	const typeDonutOptions = {
 		labels: ['Unique', 'Reused'],
-		colors: ['#818cf8', '#6366f1'],
+		colors: ['#1025e0d5', '#6366f1'],
 		legend: { position: 'right' },
 		stroke: { show: false },
 		dataLabels: { enabled: false },
@@ -464,10 +464,10 @@ function PasswordDashboard() {
 
 
 
-			<div className="footer-note">
+			{/* <div className="footer-note">
 				<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
 				Analytics are computed locally on your device and your data is always encrypted.
-			</div>
+			</div> */}
 		</section>
 	)
 }
