@@ -13,8 +13,9 @@ dist-ssr
 *.local
 
 .env
+*.env*
 PaswordManager\backend\.env
-
+D:\Devansh\Infostride\DME\Password-Manager-React\PaswordManager\backend\.env
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

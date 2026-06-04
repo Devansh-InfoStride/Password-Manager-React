@@ -21,7 +21,7 @@ function PasswordDashboard() {
 	})
 	const [loading, setLoading] = useState(true)
 
-	const API_URL = 'http://localhost:5000/api/passwords'
+	const API_URL = '/api/passwords'
 
 	useEffect(() => {
 		fetchPasswords()
@@ -45,12 +45,12 @@ function PasswordDashboard() {
 
 	const fetchSharedCount = async () => {
 		try {
-			const receivedRes = await fetchWithAuth('http://localhost:5000/api/share/received')
+			const receivedRes = await fetchWithAuth('/api/share/received')
 			if (receivedRes && receivedRes.ok) {
 				const data = await receivedRes.json()
 				setSharedCount(data.length)
 			}
-			const sentRes = await fetchWithAuth('http://localhost:5000/api/share/sent')
+			const sentRes = await fetchWithAuth('/api/share/sent')
 			if (sentRes && sentRes.ok) {
 				const data = await sentRes.json()
 				setSentSharedCount(data.length)

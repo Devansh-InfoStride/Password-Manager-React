@@ -13,7 +13,7 @@ export const ShareProvider = ({ children }) => {
     const [isLocked, setIsLocked] = useState(true);
     const [loading, setLoading] = useState(true);
 
-    const API_URL = 'http://localhost:5000/api/keys';
+    const API_URL = '/api/keys';
 
     useEffect(() => {
         checkKeys();

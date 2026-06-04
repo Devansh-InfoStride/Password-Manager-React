@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { fetchWithAuth, logout } from '../../utils/auth';
+import { fetchWithAuth, logout, API_BASE_URL } from '../../utils/auth';
 import '../../styles/userProfile.css';
 
 const UserProfile = () => {
@@ -25,12 +25,12 @@ const UserProfile = () => {
 
     const fetchProfile = async () => {
         try {
-            const response = await fetchWithAuth('http://localhost:5000/api/profile');
+            const response = await fetchWithAuth('/api/profile');
             if (response && response.ok) {
                 const data = await response.json();
                 setProfile(data);
                 setName(data.name);
-                setPhotoPreview(data.profilePhoto ? `http://localhost:5000${data.profilePhoto}` : null);
+                setPhotoPreview(data.profilePhoto ? `${API_BASE_URL}${data.profilePhoto}` : null);
             }
         } catch (error) {
             console.error('Error fetching profile:', error);
@@ -54,7 +54,7 @@ const UserProfile = () => {
         }
 
         try {
-            const response = await fetchWithAuth('http://localhost:5000/api/profile', {
+            const response = await fetchWithAuth('/api/profile', {
                 method: 'PUT',
                 body: formData
             });
@@ -81,7 +81,7 @@ const UserProfile = () => {
         }
 
         try {
-            const response = await fetchWithAuth('http://localhost:5000/api/profile/change-password', {
+            const response = await fetchWithAuth('/api/profile/change-password', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

@@ -58,7 +58,7 @@ const authenticateToken = (req, res, next) => {
     const token = authHeader && authHeader.split(" ")[1];
     if (!token) return res.status(401).json({ error: "Access denied" });
 
-    jwt.verify(token, "secret_key", (err, user) => {
+    jwt.verify(token, process.env.JWT_SECRET || "secret_key", (err, user) => {
         if (err) return res.status(403).json({ error: "Invalid token" });
         req.user = user;
         next();
@@ -69,7 +69,7 @@ const authenticateToken = (req, res, next) => {
 app.get("/api/ping", (req, res) => res.json({ ok: true, pid: process.pid }));
 
 const PORT = process.env.PORT || 5000;
-const MONGO_URI = process.env.DATABASE_URL;
+const MONGO_URI = process.env.DATABASE_URL || "mongodb://localhost:27017/passwordManager";
 
 mongoose.connect(MONGO_URI)
     .then(async () => {
@@ -320,7 +320,7 @@ app.post("/api/login", async (req, res) => {
             await OTP.deleteOne({ _id: otpRecord._id });
         }
 
-        const token = jwt.sign({ id: user._id }, "secret_key", { expiresIn: "1h" });
+        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET || "secret_key", { expiresIn: "1h" });
         res.json({ token, message: "Login successful" });
     } catch (error) {
         console.error("Login error:", error);

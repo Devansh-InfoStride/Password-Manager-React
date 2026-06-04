@@ -76,7 +76,7 @@ function PasswordManager() {
 
 	const { privateKey, isLocked } = useShare()
 
-	const API_URL = 'http://localhost:5000/api/passwords'
+	const API_URL = '/api/passwords'
 
 	useEffect(() => {
 		if (view === 'my-passwords') {
@@ -106,7 +106,7 @@ function PasswordManager() {
 	const fetchSharedPasswords = async () => {
 		try {
 			setLoading(true)
-			const response = await fetchWithAuth('http://localhost:5000/api/share/received')
+			const response = await fetchWithAuth('/api/share/received')
 			if (response && response.ok) {
 				const data = await response.json()
 				setSharedPasswords(data)
@@ -121,7 +121,7 @@ function PasswordManager() {
 	const fetchSentSharedPasswords = async () => {
 		try {
 			setLoading(true)
-			const response = await fetchWithAuth('http://localhost:5000/api/share/sent')
+			const response = await fetchWithAuth('/api/share/sent')
 			if (response && response.ok) {
 				const data = await response.json()
 				setSentSharedPasswords(data)
@@ -136,7 +136,7 @@ function PasswordManager() {
 	const handleRevokeShare = async (id) => {
 		if (!window.confirm('Are you sure you want to revoke this shared password?')) return
 		try {
-			const response = await fetchWithAuth(`http://localhost:5000/api/share/${id}`, {
+			const response = await fetchWithAuth(`/api/share/${id}`, {
 				method: 'DELETE'
 			})
 			if (response && response.ok) {
@@ -155,7 +155,7 @@ function PasswordManager() {
 		setMessage('')
 		try {
 			// 1. Fetch receiver's public key
-			const keyRes = await fetchWithAuth(`http://localhost:5000/api/users/public-key/${receiverId}`)
+			const keyRes = await fetchWithAuth(`/api/users/public-key/${receiverId}`)
 			if (!keyRes || !keyRes.ok) {
 				const errorData = await keyRes.json()
 				throw new Error(errorData.error || 'Receiver not found or sharing not setup')
@@ -166,7 +166,7 @@ function PasswordManager() {
 			const encryptedPassword = await encryptWithPublicKey(sharingPassword.password, receiverPubKey)
 
 			// 3. Send to server
-			const shareRes = await fetchWithAuth('http://localhost:5000/api/share', {
+			const shareRes = await fetchWithAuth('/api/share', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({

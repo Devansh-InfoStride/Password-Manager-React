@@ -96,7 +96,8 @@ function App() {
 		const token = localStorage.getItem('token');
 		if (!token) {
 			// Redirect to the Login application if no token is found
-			window.location.href = 'http://localhost:5174/login';
+			const loginUrl = import.meta.env.VITE_LOGIN_URL || 'http://localhost:5174/login';
+			window.location.href = loginUrl;
 		}
   }, []);
 
