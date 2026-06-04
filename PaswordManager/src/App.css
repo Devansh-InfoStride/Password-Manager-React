@@ -335,12 +335,12 @@ button:hover {
 
 .password-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
 }
 
 .password-item {
-  padding: 16px;
+  padding: 24px;
 }
 
 .password-label {
@@ -407,6 +407,8 @@ button:hover {
   font-size: 0.9rem;
   color: var(--muted);
   margin-bottom: 8px;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 .password-field {
   display: flex;

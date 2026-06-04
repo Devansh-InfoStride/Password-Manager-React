@@ -60,7 +60,8 @@ const maskPassword = (value = '') => {
 function PasswordManager() {
 	const [passwords, setPasswords] = useState([])
 	const [sharedPasswords, setSharedPasswords] = useState([])
-	const [view, setView] = useState('my-passwords') // 'my-passwords' or 'shared-with-me'
+	const [sentSharedPasswords, setSentSharedPasswords] = useState([])
+	const [view, setView] = useState('my-passwords') // 'my-passwords', 'shared-with-me', or 'shared-by-me'
 	const [form, setForm] = useState({ site: '', username: '', password: '' })
 	const [loading, setLoading] = useState(true)
 	const [message, setMessage] = useState('')
@@ -80,8 +81,10 @@ function PasswordManager() {
 	useEffect(() => {
 		if (view === 'my-passwords') {
 			fetchPasswords()
-		} else {
+		} else if (view === 'shared-with-me') {
 			fetchSharedPasswords()
+		} else if (view === 'shared-by-me') {
+			fetchSentSharedPasswords()
 		}
 	}, [view])
 
@@ -112,6 +115,37 @@ function PasswordManager() {
 			console.error('Error fetching shared passwords', error)
 		} finally {
 			setLoading(false)
+		}
+	}
+
+	const fetchSentSharedPasswords = async () => {
+		try {
+			setLoading(true)
+			const response = await fetchWithAuth('http://localhost:5000/api/share/sent')
+			if (response && response.ok) {
+				const data = await response.json()
+				setSentSharedPasswords(data)
+			}
+		} catch (error) {
+			console.error('Error fetching sent shared passwords', error)
+		} finally {
+			setLoading(false)
+		}
+	}
+
+	const handleRevokeShare = async (id) => {
+		if (!window.confirm('Are you sure you want to revoke this shared password?')) return
+		try {
+			const response = await fetchWithAuth(`http://localhost:5000/api/share/${id}`, {
+				method: 'DELETE'
+			})
+			if (response && response.ok) {
+				setSentSharedPasswords(sentSharedPasswords.filter((p) => p._id !== id))
+				alert('Sharing revoked successfully')
+			}
+		} catch (error) {
+			console.error('Error revoking sharing', error)
+			alert('Failed to revoke sharing')
 		}
 	}
 
@@ -290,6 +324,13 @@ function PasswordManager() {
 				>
 					Shared with Me
 				</button>
+				<button 
+					className={`tab-btn ${view === 'shared-by-me' ? 'active' : ''}`}
+					onClick={() => setView('shared-by-me')}
+					style={{ background: view === 'shared-by-me' ? '#3b82f6' : '#64748b', color: 'white', padding: '0.5rem 1rem', border: 'none', borderRadius: '6px', cursor: 'pointer' }}
+				>
+					Shared by Me
+				</button>
 			</div>
 
 			{view === 'my-passwords' && (
@@ -333,7 +374,13 @@ function PasswordManager() {
 			)}
 
 			<div className="results-section">
-				<h2>{view === 'my-passwords' ? 'Your Saved Passwords' : 'Passwords Shared with You'}</h2>
+				<h2>
+					{view === 'my-passwords' 
+						? 'Your Saved Passwords' 
+						: view === 'shared-with-me' 
+							? 'Passwords Shared with You' 
+							: 'Passwords You Have Shared'}
+				</h2>
 				{loading ? (
 					<p>Loading...</p>
 				) : view === 'my-passwords' ? (
@@ -383,7 +430,7 @@ function PasswordManager() {
 							})}
 						</div>
 					)
-				) : (
+				) : view === 'shared-with-me' ? (
 					sharedPasswords.length === 0 ? (
 						<p>No passwords shared with you yet.</p>
 					) : (
@@ -410,6 +457,34 @@ function PasswordManager() {
 										<p style={{ fontSize: '0.75rem', color: 'var(--muted)', marginTop: '8px' }}>
 											Shared on: {new Date(p.timestamp).toLocaleDateString()}
 										</p>
+									</div>
+								</article>
+							))}
+						</div>
+					)
+				) : (
+					sentSharedPasswords.length === 0 ? (
+						<p>You haven't shared any passwords yet.</p>
+					) : (
+						<div className="password-grid">
+							{sentSharedPasswords.map((p) => (
+								<article className="password-item" key={p._id}>
+									<div className="password-info">
+										<p className="password-label">{p.site}</p>
+										<p className="password-username">User: {p.username}</p>
+										<p className="password-username">Shared with: {p.receiverId.name} ({p.receiverId.email})</p>
+										<p style={{ fontSize: '0.75rem', color: 'var(--muted)', marginTop: '8px' }}>
+											Shared on: {new Date(p.timestamp).toLocaleDateString()}
+										</p>
+									</div>
+									<div style={{ marginTop: '10px' }}>
+										<button 
+											type="button" 
+											onClick={() => handleRevokeShare(p._id)} 
+											style={{ background: '#ef4444', color: 'white', border: 'none', padding: '8px', borderRadius: '4px', cursor: 'pointer', width: '100%' }}
+										>
+											Revoke Access
+										</button>
 									</div>
 								</article>
 							))}

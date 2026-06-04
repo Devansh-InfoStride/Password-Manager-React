@@ -7,6 +7,7 @@ import '../../styles/passwordDashboard.css'
 function PasswordDashboard() {
 	const [passwords, setPasswords] = useState([])
 	const [sharedCount, setSharedCount] = useState(0)
+	const [sentSharedCount, setSentSharedCount] = useState(0)
 	const [stats, setStats] = useState({
 		total: 0,
 		strong: 0,
@@ -44,13 +45,18 @@ function PasswordDashboard() {
 
 	const fetchSharedCount = async () => {
 		try {
-			const response = await fetchWithAuth('http://localhost:5000/api/share/received')
-			if (response && response.ok) {
-				const data = await response.json()
+			const receivedRes = await fetchWithAuth('http://localhost:5000/api/share/received')
+			if (receivedRes && receivedRes.ok) {
+				const data = await receivedRes.json()
 				setSharedCount(data.length)
 			}
+			const sentRes = await fetchWithAuth('http://localhost:5000/api/share/sent')
+			if (sentRes && sentRes.ok) {
+				const data = await sentRes.json()
+				setSentSharedCount(data.length)
+			}
 		} catch (error) {
-			console.error('Error fetching shared count', error)
+			console.error('Error fetching shared counts', error)
 		}
 	}
 
@@ -234,6 +240,19 @@ function PasswordDashboard() {
 					</div>
 					<div className="stat-trend trend-up">
 						Incoming Access
+					</div>
+				</div>
+
+				<div className="stat-card">
+					<div className="stat-icon-wrapper purple">
+						<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+					</div>
+					<div className="stat-content">
+						<span className="stat-value">{sentSharedCount}</span>
+						<span className="stat-label">Shared by Me</span>
+					</div>
+					<div className="stat-trend trend-up">
+						Outgoing Access
 					</div>
 				</div>
 

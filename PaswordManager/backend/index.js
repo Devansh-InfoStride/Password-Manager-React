@@ -191,6 +191,16 @@ app.get("/api/share/sent", authenticateToken, async (req, res) => {
     }
 });
 
+app.delete("/api/share/:id", authenticateToken, async (req, res) => {
+    try {
+        const result = await SharedPassword.findOneAndDelete({ _id: req.params.id, senderId: req.user.id });
+        if (!result) return res.status(404).json({ error: "Shared password not found or you don't have permission" });
+        res.json({ message: "Sharing revoked successfully" });
+    } catch (error) {
+        res.status(500).json({ error: "Failed to revoke sharing" });
+    }
+});
+
 // User Profile Routes (continued)
 app.get("/api/profile", authenticateToken, async (req, res) => {
     try {
