@@ -149,8 +149,6 @@ function applyProtection(field) {
     updatePosition();
     window.addEventListener('scroll', updatePosition, { passive: true });
     window.addEventListener('resize', updatePosition);
-    field.addEventListener('focus', () => overlay.classList.add('pass-guard-hidden'));
-    field.addEventListener('blur', () => overlay.classList.remove('pass-guard-hidden'));
     const observer = new MutationObserver(() => {
         if (!document.body.contains(field)) {
             overlay.remove();
