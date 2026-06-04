@@ -16,7 +16,12 @@ export const ShareProvider = ({ children }) => {
     const API_URL = '/api/keys';
 
     useEffect(() => {
-        checkKeys();
+        const token = localStorage.getItem('token') || new URLSearchParams(window.location.search).get('token');
+        if (token) {
+            checkKeys();
+        } else {
+            setLoading(false);
+        }
     }, []);
 
     const checkKeys = async () => {

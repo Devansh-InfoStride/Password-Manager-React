@@ -15,7 +15,9 @@ export const fetchWithAuth = async (url, options = {}) => {
     };
 
     // Ensure URL is absolute if it doesn't start with http
-    const fullUrl = url.startsWith('http') ? url : `${API_BASE_URL}${url.startsWith('/') ? '' : '/'}${url}`;
+    const cleanBaseUrl = API_BASE_URL.endsWith('/') ? API_BASE_URL.slice(0, -1) : API_BASE_URL;
+    const cleanPath = url.startsWith('/') ? url : `/${url}`;
+    const fullUrl = url.startsWith('http') ? url : `${cleanBaseUrl}${cleanPath}`;
 
     try {
         const response = await fetch(fullUrl, { ...options, headers });
