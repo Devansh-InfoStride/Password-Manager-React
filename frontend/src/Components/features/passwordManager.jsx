@@ -299,7 +299,7 @@ function PasswordManager() {
 	}
 
 	return (
-		<section className="page-section narrow">
+		<section className="page-section">
 			<VaultModal />
 			
 			<div className="page-heading">
@@ -329,8 +329,9 @@ function PasswordManager() {
 				</button>
 			</div>
 
-			{view === 'my-passwords' && (
-				<div className="form-card">
+			<div className={view === 'my-passwords' ? 'vault-layout' : ''}>
+				{view === 'my-passwords' && (
+					<div className="form-card">
 					<form onSubmit={handleSubmit} className="stacked-form">
 						<label htmlFor="site">Site Name</label>
 						<input id="site" name="site" type="text" value={form.site} onChange={handleChange} placeholder="e.g. Google, GitHub" required />
@@ -487,6 +488,7 @@ function PasswordManager() {
 						</div>
 					)
 				)}
+			</div>
 			</div>
 
 			{/* Share Modal */}

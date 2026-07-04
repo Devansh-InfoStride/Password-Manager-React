@@ -135,7 +135,7 @@ const UserProfile = () => {
 
             <form onSubmit={handleProfileUpdate} className="profile-info">
                 <div className="profile-photo-section" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '15px', height: 'auto', width: 'auto' }}>
-                    <div style={{ width: '150px', height: '150px', borderRadius: '50%', border: '3px solid var(--accent)', padding: '5px', background: 'var(--bg-main)', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+                    <div style={{ width: '150px', height: '150px', borderRadius: '50%', border: '3px solid var(--primary)', padding: '5px', background: 'var(--panel-soft)', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
                         <img 
                             src={avatarUrl} 
                             alt="Avatar Preview" 
@@ -147,7 +147,7 @@ const UserProfile = () => {
                         <select 
                             value={avatarStyle} 
                             onChange={(e) => setAvatarStyle(e.target.value)}
-                            style={{ flex: 1, padding: '10px', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'var(--bg-main)', color: 'var(--text-main)', outline: 'none' }}
+                            style={{ flex: 1 }}
                         >
                             {AVATAR_STYLES.map(style => (
                                 <option key={style.id} value={style.id}>{style.name}</option>
@@ -157,7 +157,7 @@ const UserProfile = () => {
                         <button 
                             type="button" 
                             onClick={() => setAvatarSeed(Math.random().toString(36).substring(2, 9))}
-                            style={{ padding: '8px 14px', borderRadius: '6px', border: 'none', background: 'var(--accent)', color: 'white', cursor: 'pointer', fontWeight: 'bold' }}
+                            style={{ padding: '8px 14px', borderRadius: 'var(--radius-sm)', border: 'none', background: 'var(--primary)', color: 'white', cursor: 'pointer', fontWeight: 'bold' }}
                             title="Randomize Avatar Seed"
                         >
                             🎲 Random
