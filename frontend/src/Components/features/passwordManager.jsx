@@ -299,8 +299,9 @@ function PasswordManager() {
 	}
 
 	return (
-		<section className="page-section">
+		<div className="password-manager-container">
 			<VaultModal />
+			<section className="page-section">
 			
 			<div className="page-heading">
 				<p className="eyebrow">Vault</p>
@@ -491,6 +492,7 @@ function PasswordManager() {
 			</div>
 			</div>
 
+		</section>
 			{/* Share Modal */}
 			{sharingPassword && (
 				<div className="modal-overlay">
@@ -520,7 +522,7 @@ function PasswordManager() {
 					</div>
 				</div>
 			)}
-		</section>
+		</div>
 	)
 }
 
