@@ -308,25 +308,22 @@ function PasswordManager() {
 				<p>Securely save and manage your passwords for different sites.</p>
 			</div>
 
-			<div className="tab-navigation" style={{ display: 'flex', gap: '1rem', marginBottom: '2rem' }}>
+			<div className="tab-navigation">
 				<button 
 					className={`tab-btn ${view === 'my-passwords' ? 'active' : ''}`}
 					onClick={() => setView('my-passwords')}
-					style={{ background: view === 'my-passwords' ? '#3b82f6' : '#64748b', color: 'white', padding: '0.5rem 1rem', border: 'none', borderRadius: '6px', cursor: 'pointer' }}
 				>
 					My Passwords
 				</button>
 				<button 
 					className={`tab-btn ${view === 'shared-with-me' ? 'active' : ''}`}
 					onClick={() => setView('shared-with-me')}
-					style={{ background: view === 'shared-with-me' ? '#3b82f6' : '#64748b', color: 'white', padding: '0.5rem 1rem', border: 'none', borderRadius: '6px', cursor: 'pointer' }}
 				>
 					Shared with Me
 				</button>
 				<button 
 					className={`tab-btn ${view === 'shared-by-me' ? 'active' : ''}`}
 					onClick={() => setView('shared-by-me')}
-					style={{ background: view === 'shared-by-me' ? '#3b82f6' : '#64748b', color: 'white', padding: '0.5rem 1rem', border: 'none', borderRadius: '6px', cursor: 'pointer' }}
 				>
 					Shared by Me
 				</button>
@@ -363,9 +360,9 @@ function PasswordManager() {
 							</button>
 						</div>
 
-						<div style={{ display: 'flex', gap: '10px' }}>
+						<div style={{ display: 'flex', gap: '12px', marginTop: '12px' }}>
 							<button type="submit" style={{ flex: 1 }}>{editingId ? 'Update Password' : 'Save Password'}</button>
-							{editingId && <button type="button" onClick={cancelEdit} style={{ background: '#64748b' }}>Cancel</button>}
+							{editingId && <button type="button" onClick={cancelEdit} style={{ background: 'rgba(255, 255, 255, 0.08)', color: 'var(--text-secondary)' }}>Cancel</button>}
 						</div>
 					</form>
 					{message && <p className="success-message">{message}</p>}
@@ -413,14 +410,14 @@ function PasswordManager() {
 											Last Updated: {p.last_updated ? new Date(p.last_updated).toLocaleDateString() : 'Never'}
 										</p>
 									</div>
-									<div style={{ display: 'flex', gap: '8px', marginTop: '10px', flexWrap: 'wrap' }}>
-										<button type="button" onClick={() => startEditing(p)} style={{ background: '#3b82f6', flex: 1, color: 'white', border: 'none', padding: '8px', borderRadius: '4px', cursor: 'pointer' }}>
+									<div style={{ display: 'flex', gap: '10px', marginTop: '14px', flexWrap: 'wrap' }}>
+										<button type="button" onClick={() => startEditing(p)} style={{ flex: 1, padding: '10px 14px', background: 'rgba(99, 102, 241, 0.1)', color: '#818cf8', border: '1px solid rgba(99, 102, 241, 0.2)', borderRadius: 'var(--radius-md)' }}>
 											Edit
 										</button>
-										<button type="button" onClick={() => setSharingPassword(p)} style={{ background: '#8b5cf6', flex: 1, color: 'white', border: 'none', padding: '8px', borderRadius: '4px', cursor: 'pointer' }}>
+										<button type="button" onClick={() => setSharingPassword(p)} style={{ flex: 1, padding: '10px 14px', background: 'rgba(168, 85, 247, 0.1)', color: '#c084fc', border: '1px solid rgba(168, 85, 247, 0.2)', borderRadius: 'var(--radius-md)' }}>
 											Share
 										</button>
-										<button type="button" onClick={() => handleDelete(p._id)} className="delete-btn" style={{ flex: '1 0 100%', background: '#ef4444', color: 'white', border: 'none', padding: '8px', borderRadius: '4px', cursor: 'pointer', marginTop: '8px' }}>
+										<button type="button" onClick={() => handleDelete(p._id)} className="delete-btn" style={{ flex: '1 0 100%', padding: '10px 14px', borderRadius: 'var(--radius-md)', marginTop: '8px' }}>
 											Delete
 										</button>
 									</div>
