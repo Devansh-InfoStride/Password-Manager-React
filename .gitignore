@@ -19,3 +19,10 @@ dist-ssr/
 *.njsproj
 *.sln
 *.sw?
+
+.agents/
+.impeccable/
+.impeccable/live/
+DESIGN.md
+PRODUCT.md
+skills-lock.json

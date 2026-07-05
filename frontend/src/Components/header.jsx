@@ -49,7 +49,7 @@ function Header() {
 					</li>
 					<li style={{ display: 'flex', alignItems: 'center' }}>
 						<button 
-							className="theme-toggle-btn" 
+							className="icon-toggle" 
 							onClick={toggleTheme} 
 							aria-label="Toggle Theme"
 							title={`Switch to ${theme === 'dark' ? 'Light' : 'Dark'} Mode`}

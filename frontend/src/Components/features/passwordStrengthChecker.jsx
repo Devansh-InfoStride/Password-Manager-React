@@ -72,7 +72,7 @@ function PasswordStrengthChecker() {
 			<div className="page-heading">
 				<p className="eyebrow">Checker</p>
 				<h1>Password Strength Checker</h1>
-				<p>Type a password and get a quick strength check with simple feedback.</p>
+				<p>Instantly analyze the resilience of your passwords against modern cracking techniques.</p>
 			</div>
 
 			<div className="form-card">

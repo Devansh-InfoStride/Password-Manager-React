@@ -126,8 +126,8 @@ function PasswordGenerator() {
 		<section className="page-section narrow">
 			<div className="page-heading">
 				<p className="eyebrow">Generator</p>
-				<h1>Password Generator</h1>
-				<p>Fill out a few simple details and generate a few personalized passwords.</p>
+				<h1>Smart Password Generator</h1>
+				<p>Create cryptographically secure, unpredictable passwords instantly.</p>
 			</div>
 
 			<div className="form-card">

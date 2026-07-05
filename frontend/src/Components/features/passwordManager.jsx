@@ -306,7 +306,7 @@ function PasswordManager() {
 			<div className="page-heading">
 				<p className="eyebrow">Vault</p>
 				<h1>Password Manager</h1>
-				<p>Securely save and manage your passwords for different sites.</p>
+				<p>Securely save and manage your credentials behind end-to-end encryption.</p>
 			</div>
 
 			<div className="tab-navigation">
@@ -413,13 +413,13 @@ function PasswordManager() {
 										</p>
 									</div>
 									<div style={{ display: 'flex', gap: '10px', marginTop: '14px', flexWrap: 'wrap' }}>
-										<button type="button" onClick={() => startEditing(p)} style={{ flex: 1, padding: '10px 14px', background: 'rgba(99, 102, 241, 0.1)', color: '#818cf8', border: '1px solid rgba(99, 102, 241, 0.2)', borderRadius: 'var(--radius-md)' }}>
+										<button type="button" onClick={() => startEditing(p)} className="btn-secondary" style={{ flex: 1 }}>
 											Edit
 										</button>
-										<button type="button" onClick={() => setSharingPassword(p)} style={{ flex: 1, padding: '10px 14px', background: 'rgba(168, 85, 247, 0.1)', color: '#c084fc', border: '1px solid rgba(168, 85, 247, 0.2)', borderRadius: 'var(--radius-md)' }}>
+										<button type="button" onClick={() => setSharingPassword(p)} className="btn-accent" style={{ flex: 1 }}>
 											Share
 										</button>
-										<button type="button" onClick={() => handleDelete(p._id)} className="delete-btn" style={{ flex: '1 0 100%', padding: '10px 14px', borderRadius: 'var(--radius-md)', marginTop: '8px' }}>
+										<button type="button" onClick={() => handleDelete(p._id)} className="btn-danger" style={{ flex: '1 0 100%', marginTop: '8px' }}>
 											Delete
 										</button>
 									</div>
@@ -479,7 +479,8 @@ function PasswordManager() {
 										<button 
 											type="button" 
 											onClick={() => handleRevokeShare(p._id)} 
-											style={{ background: '#ef4444', color: 'white', border: 'none', padding: '8px', borderRadius: '4px', cursor: 'pointer', width: '100%' }}
+											className="btn-danger"
+											style={{ width: '100%' }}
 										>
 											Revoke Access
 										</button>
@@ -510,10 +511,10 @@ function PasswordManager() {
 								required 
 							/>
 							<div style={{ display: 'flex', gap: '10px', marginTop: '1rem' }}>
-								<button type="submit" disabled={isSharing} style={{ background: '#8b5cf6', flex: 1, color: 'white', border: 'none', padding: '10px', borderRadius: '6px', cursor: 'pointer' }}>
+								<button type="submit" disabled={isSharing} className="btn-primary" style={{ flex: 1 }}>
 									{isSharing ? 'Sharing...' : 'Confirm Share'}
 								</button>
-								<button type="button" onClick={() => { setSharingPassword(null); setMessage(''); }} style={{ background: '#64748b', flex: 1, color: 'white', border: 'none', padding: '10px', borderRadius: '6px', cursor: 'pointer' }}>
+								<button type="button" onClick={() => { setSharingPassword(null); setMessage(''); }} className="btn-secondary" style={{ flex: 1 }}>
 									Cancel
 								</button>
 							</div>

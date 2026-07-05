@@ -9,32 +9,7 @@ import PasswordDashboard from './Components/features/passwordDashboard'
 import UserProfile from './Components/features/userProfile'
 import './App.css'
 
-const homeCards = [
-	{
-		title: 'Dashboard Analytics',
-		text: 'View your password security overview and health.',
-		to: '/dashboard',
-		button: 'View Dashboard',
-	},
-	{
-		title: 'Check Your Password Strength',
-		text: 'Enter a password and see how strong it is.',
-		to: '/checker',
-		button: 'Check Strength',
-	},
-	{
-		title: 'Generate a Strong Password',
-		text: 'Create a secure password based on your details.',
-		to: '/generator',
-		button: 'Generate Password',
-	},
-	{
-		title: 'Save and Manage Passwords',
-		text: 'Keep your passwords in one secure place.',
-		to: '/manage',
-		button: 'Explore',
-	},
-]
+
 
 function Layout() {
 	return (
@@ -59,16 +34,39 @@ function HomePage() {
 				</p>
 			</div>
 
-			<div className="card-grid">
-				{homeCards.map((card) => (
-					<article className="feature-card" key={card.title}>
-						<h2>{card.title}</h2>
-						<p>{card.text}</p>
-						<Link className="button-link" to={card.to}>
-							{card.button}
-						</Link>
-					</article>
-				))}
+			<div className="bento-grid">
+				<Link to="/dashboard" className="bento-item bento-large">
+					<h2>Dashboard Analytics</h2>
+					<p>Get a comprehensive overview of your vault's security health, exposed passwords, and overall safety score in real-time.</p>
+					<div className="bento-action">
+						<span className="button-link">View Dashboard</span>
+					</div>
+					<div className="bento-decoration glow-orb"></div>
+				</Link>
+
+				<Link to="/checker" className="bento-item bento-medium">
+					<h2>Strength Checker</h2>
+					<p>Instantly analyze the resilience of your passwords against modern cracking techniques.</p>
+					<div className="bento-action">
+						<span className="button-link">Test Password</span>
+					</div>
+				</Link>
+
+				<Link to="/generator" className="bento-item bento-wide">
+					<h2>Smart Generator</h2>
+					<p>Create cryptographically secure, unpredictable passwords instantly.</p>
+					<div className="bento-action">
+						<span className="button-link">Generate</span>
+					</div>
+				</Link>
+				
+				<Link to="/manage" className="bento-item bento-small">
+					<h2>Your Vault</h2>
+					<p>Access your securely encrypted credentials.</p>
+					<div className="bento-action">
+						<span className="button-link">Open</span>
+					</div>
+				</Link>
 			</div>
 		</section>
 	)

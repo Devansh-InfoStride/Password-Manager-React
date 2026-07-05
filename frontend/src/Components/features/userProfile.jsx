@@ -157,7 +157,8 @@ const UserProfile = () => {
                         <button 
                             type="button" 
                             onClick={() => setAvatarSeed(Math.random().toString(36).substring(2, 9))}
-                            style={{ padding: '8px 14px', borderRadius: 'var(--radius-sm)', border: 'none', background: 'var(--primary)', color: 'white', cursor: 'pointer', fontWeight: 'bold' }}
+                            className="btn-primary"
+                            style={{ padding: '0 16px', display: 'flex', alignItems: 'center' }}
                             title="Randomize Avatar Seed"
                         >
                             🎲 Random
@@ -165,13 +166,12 @@ const UserProfile = () => {
                     </div>
 
                     <div className="info-group" style={{ width: '100%', maxWidth: '320px' }}>
-                        <label style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Avatar Custom Seed</label>
+                        <label style={{ fontSize: '12px', color: 'var(--muted)' }}>Avatar Custom Seed</label>
                         <input 
                             type="text" 
                             value={avatarSeed} 
                             onChange={(e) => setAvatarSeed(e.target.value)}
                             placeholder="Type custom text..."
-                            style={{ padding: '10px', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'var(--bg-main)', color: 'var(--text-main)' }}
                         />
                     </div>
                 </div>
@@ -196,7 +196,7 @@ const UserProfile = () => {
                     />
                 </div>
 
-                <button type="submit" className="save-button">Save Profile Changes</button>
+                <button type="submit" className="btn-primary">Save Profile Changes</button>
             </form>
 
             <form onSubmit={handleChangePassword} className="change-password-section">
@@ -229,11 +229,11 @@ const UserProfile = () => {
                             required 
                         />
                     </div>
-                    <button type="submit" className="password-button">Change Password</button>
+                    <button type="submit" className="btn-primary">Change Password</button>
                 </div>
             </form>
 
-            <button onClick={handleLogout} className="logout-button">Logout</button>
+            <button onClick={handleLogout} className="btn-danger" style={{ width: '100%', marginTop: '24px' }}>Logout</button>
 
             {message.text && (
                 <p className={message.type === 'success' ? 'success-message' : 'error-message'}>
