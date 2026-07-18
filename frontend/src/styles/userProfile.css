@@ -26,9 +26,6 @@
   font-weight: 800;
   color: var(--text);
   letter-spacing: -0.02em;
-  background: linear-gradient(180deg, #ffffff 40%, rgba(255, 255, 255, 0.6) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
 }
 
 .profile-photo-section {
@@ -92,7 +89,7 @@
 .info-group input:disabled {
   opacity: 0.5;
   cursor: not-allowed;
-  background: rgba(8, 11, 17, 0.3);
+  background: var(--panel-soft);
 }
 
 .change-password-section {

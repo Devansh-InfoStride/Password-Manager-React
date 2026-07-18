@@ -1,9 +1,8 @@
 export const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-export const LOGIN_URL = import.meta.env.VITE_LOGIN_URL || 'http://localhost:5174/login';
 
 export const logout = () => {
     localStorage.removeItem('token');
-    window.location.href = LOGIN_URL;
+    window.location.href = '/login';
 };
 
 export const fetchWithAuth = async (url, options = {}) => {

@@ -1,21 +1,17 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-body {
+/* Scoped to .auth-page so these rules never leak into the rest of the app
+   (previously this file styled `body`/`a` globally, which meant visiting
+   /login once permanently overrode the whole app's theme, breaking light
+   mode everywhere else). */
+.auth-page {
   font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-  background: #080b11;
-  background-image: 
-    radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 40%),
-    radial-gradient(circle at 90% 80%, rgba(168, 85, 247, 0.12) 0%, transparent 40%),
-    linear-gradient(180deg, #090d16 0%, #05070c 100%);
+  background: var(--bg-dark);
+  background-image: var(--bg-gradient);
   background-attachment: fixed;
-  color: #f3f4f6;
+  color: var(--text);
   min-height: 100vh;
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -25,28 +21,28 @@ body {
 }
 
 /* Moving Mesh Background Blobs (Pure CSS) */
-body::before,
-body::after {
+.auth-page::before,
+.auth-page::after {
   content: '';
   position: absolute;
   width: 300px;
   height: 300px;
   border-radius: 50%;
   filter: blur(80px);
-  z-index: -1;
-  opacity: 0.35;
+  z-index: 0;
+  opacity: 0.25;
   pointer-events: none;
 }
 
-body::before {
-  background: #5f5dec;
+.auth-page::before {
+  background: var(--primary);
   top: 15%;
   left: 20%;
   animation: floatOrbOne 16s infinite alternate ease-in-out;
 }
 
-body::after {
-  background: #a855f7;
+.auth-page::after {
+  background: var(--secondary);
   bottom: 15%;
   right: 20%;
   animation: floatOrbTwo 16s infinite alternate ease-in-out;
@@ -82,121 +78,120 @@ body::after {
   }
 }
 
-.container {
+.auth-page .container {
   width: 100%;
   max-width: 460px;
   margin: 0 auto;
   animation: fadeInUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both;
   z-index: 10;
+  position: relative;
 }
 
-.heading {
+.auth-page .heading {
   text-align: center;
   margin-bottom: 32px;
 }
 
-.heading h1 {
+.auth-page .heading h1 {
   font-size: 2.2rem;
   font-weight: 800;
   letter-spacing: -0.03em;
-  background: linear-gradient(135deg, #ffffff 40%, rgba(255, 255, 255, 0.7) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: var(--text);
   margin-bottom: 10px;
 }
 
-.heading p {
+.auth-page .heading p {
   font-size: 0.95rem;
-  color: #9ca3af;
+  color: var(--muted);
   line-height: 1.5;
   max-width: 380px;
   margin: 0 auto;
 }
 
-.heading h2 {
+.auth-page .heading h2 {
   margin-top: 24px;
   font-size: 1.5rem;
   font-weight: 700;
-  color: #f3f4f6;
+  color: var(--text);
   letter-spacing: -0.01em;
 }
 
-.signupForm {
-  background: rgba(17, 24, 39, 0.65);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 20px;
+.auth-page .signupForm {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
   padding: 40px;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4), 0 0 30px rgba(99, 102, 241, 0.1);
+  box-shadow: var(--shadow-lg);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
 }
 
-.signupForm form {
+.auth-page .signupForm form {
   display: flex;
   flex-direction: column;
   align-items: stretch;
 }
 
-.signupForm input[type="email"],
-.signupForm input[type="password"],
-.signupForm input[type="text"] {
+.auth-page .signupForm input[type="email"],
+.auth-page .signupForm input[type="password"],
+.auth-page .signupForm input[type="text"] {
   width: 100%;
   padding: 14px 16px;
   margin-bottom: 18px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
-  background: rgba(8, 11, 17, 0.4);
-  color: #f3f4f6;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--input-bg);
+  color: var(--text);
   font-family: inherit;
   font-size: 0.95rem;
   outline: none;
-  transition: all 0.2s ease;
+  transition: var(--transition-fast);
   text-align: left;
 }
 
-.signupForm input:focus {
-  border-color: #5f5dec;
-  background: rgba(8, 11, 17, 0.7);
+.auth-page .signupForm input:focus {
+  border-color: var(--primary);
+  background: var(--input-bg-focus);
   box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
 }
 
-.formHeading {
+.auth-page .formHeading {
   display: flex;
   align-items: center;
   gap: 8px;
   margin-bottom: 20px;
   font-size: 0.88rem;
-  color: #9ca3af;
+  color: var(--muted);
   cursor: pointer;
   width: fit-content;
   user-select: none;
 }
 
-.formHeading input[type="checkbox"] {
+.auth-page .formHeading input[type="checkbox"] {
   width: 16px;
   height: 16px;
-  accent-color: #5f5dec;
+  accent-color: var(--primary);
   cursor: pointer;
 }
 
-a {
-  color: #818cf8;
+.auth-page a {
+  color: var(--primary);
   text-decoration: none;
   font-weight: 600;
   transition: color 0.15s ease;
 }
 
-a:hover {
-  color: #c084fc;
+.auth-page a:hover {
+  color: var(--secondary);
 }
 
-.signupForm button {
+.auth-page .signupForm button {
   width: 100%;
   padding: 14px;
-  background: linear-gradient(135deg, #5f5dec 0%, #a855f7 100%);
+  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
   color: white;
   border: none;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   font-size: 1.05rem;
   font-weight: 700;
   cursor: pointer;
@@ -204,20 +199,20 @@ a:hover {
   transition: all 0.25s ease;
 }
 
-.signupForm button:hover {
+.auth-page .signupForm button:hover {
   transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.45), 0 0 15px rgba(168, 85, 247, 0.25);
+  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
   filter: brightness(1.05);
 }
 
-.signupForm button:active {
+.auth-page .signupForm button:active {
   transform: translateY(0);
 }
 
-.signupForm p {
+.auth-page .signupForm p {
   padding-top: 24px;
   margin: 0;
   font-size: 0.9rem;
   text-align: center;
-  color: #9ca3af;
+  color: var(--muted);
 }

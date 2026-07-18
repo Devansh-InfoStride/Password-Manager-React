@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics="">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&amp;family=Hanken+Grotesk:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0}
+a{color:inherit;text-decoration:none}
+button{font:inherit;cursor:pointer;border:none;background:none;color:inherit;padding:0}
+::selection{background:var(--accent);color:var(--accent-ink)}
+@keyframes pg-spin{to{transform:rotateY(360deg)}}
+@keyframes pg-spin-rev{to{transform:rotateY(-360deg)}}
+@keyframes pg-disc{to{transform:rotate(360deg)}}
+@keyframes pg-disc-rev{to{transform:rotate(-360deg)}}
+@keyframes pg-float{0%,100%{transform:translateY(-8px)}50%{transform:translateY(8px)}}
+@keyframes pg-pulse{0%,100%{opacity:.35;transform:scale(1)}50%{opacity:.85;transform:scale(1.06)}}
+@keyframes pg-marquee{to{transform:translateX(-50%)}}
+@keyframes pg-travel{0%{left:6%;opacity:0}12%{opacity:1}88%{opacity:1}100%{left:94%;opacity:0}}
+@keyframes pg-blink{0%,100%{opacity:.25}50%{opacity:1}}
+@keyframes pg-scan{0%,100%{transform:translateY(-12px);opacity:.25}50%{transform:translateY(12px);opacity:1}}
+@keyframes pg-drift{0%,100%{transform:translate(0,0)}50%{transform:translate(24px,-20px)}}
+@keyframes pg-drift2{0%,100%{transform:translate(0,0)}50%{transform:translate(-22px,18px)}}
+@keyframes pg-ring2{0%,100%{transform:scale(1);opacity:.45}50%{transform:scale(1.18);opacity:.9}}
+@keyframes pg-play{0%,100%{transform:scale(1);box-shadow:0 0 0 0 var(--glow)}50%{transform:scale(1.06);box-shadow:0 0 0 18px transparent}}
+@keyframes pg-slide{0%{left:8%;opacity:0}15%{opacity:1}85%{opacity:1}100%{left:88%;opacity:0}}
+@keyframes pg-bar{0%,100%{transform:scaleY(.35)}50%{transform:scaleY(1)}}
+@keyframes pg-turn{0%,100%{transform:rotate(-14deg)}50%{transform:rotate(14deg)}}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+</helmet>
+<div ref="{{ setRoot }}" style="--bg:#08090c;--bg-elev:#0f1116;--bg-elev2:#161922;--fg:#f3f1ea;--fg-dim:#a6a9b2;--fg-faint:#676b76;--line:rgba(255,255,255,.09);--line-2:rgba(255,255,255,.15);--accent:#c4ff44;--accent-2:#8b7bff;--accent-ink:#0a0b0e;--glow:rgba(196,255,68,.22);color-scheme:dark;position:relative;min-height:100vh;background:var(--bg);color:var(--fg);font-family:'Hanken Grotesk',system-ui,sans-serif;overflow-x:hidden;transition:background .5s ease,color .5s ease">
+
+  <div style="position:fixed;top:0;left:0;right:0;height:2px;z-index:200;background:transparent"><div ref="{{ setProg }}" style="height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--accent-2));box-shadow:0 0 12px var(--glow)"></div></div>
+
+  <div aria-hidden="true" style="position:absolute;inset:0;pointer-events:none;z-index:0;background:radial-gradient(1100px 600px at 78% -8%,var(--glow),transparent 60%),radial-gradient(900px 500px at 8% 30%,rgba(139,123,255,.12),transparent 55%)"></div>
+  <div aria-hidden="true" style="position:absolute;inset:0;pointer-events:none;z-index:0;opacity:.5;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:64px 64px;mask-image:radial-gradient(circle at 50% 0%,#000,transparent 75%);-webkit-mask-image:radial-gradient(circle at 50% 0%,#000,transparent 75%)"></div>
+
+  <!-- NAV -->
+  <nav style="position:sticky;top:0;z-index:100;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);background:color-mix(in srgb,var(--bg) 72%,transparent);border-bottom:1px solid var(--line)">
+    <div style="max-width:1240px;margin:0 auto;padding:14px 28px;display:flex;align-items:center;gap:24px">
+      <a href="#top" style="display:flex;align-items:center;gap:11px">
+        <span style="display:grid;place-items:center;width:34px;height:34px;border-radius:9px;background:var(--accent);box-shadow:0 0 20px var(--glow)">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent-ink)" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 5v6c0 5 3.5 8 8 11 4.5-3 8-6 8-11V5l-8-3Z"></path><circle cx="12" cy="11" r="2.2"></circle><path d="M12 13.2V16"></path></svg>
+        </span>
+        <span style="font-family:'Space Grotesk';font-weight:700;font-size:19px;letter-spacing:-.02em">PassGuard</span>
+      </a>
+      <div style="flex:1"></div>
+      <div style="display:flex;align-items:center;gap:30px;font-size:14.5px;color:var(--fg-dim)" class="pg-navlinks">
+        <a href="#features" style="transition:color .2s" style-hover="color:var(--fg)">Features</a>
+        <a href="#security" style="transition:color .2s" style-hover="color:var(--fg)">Security</a>
+        <a href="#how" style="transition:color .2s" style-hover="color:var(--fg)">How it works</a>
+      </div>
+      <button onClick="{{ toggle }}" aria-label="Toggle theme" style="display:grid;place-items:center;width:38px;height:38px;border-radius:10px;border:1px solid var(--line);background:var(--bg-elev);transition:border-color .2s,transform .2s" style-hover="border-color:var(--line-2);transform:translateY(-1px)">
+        <sc-if value="{{ isDark }}" hint-placeholder-val="{{ true }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.5 6.5 0 0 0 9.8 9.8Z"></path></svg></sc-if>
+        <sc-if value="{{ isLight }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"></circle><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5 19 19M19 5l-1.5 1.5M6.5 17.5 5 19"></path></svg></sc-if>
+      </button>
+      <a href="/login" style="display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:10px;background:var(--accent);color:var(--accent-ink);font-weight:600;font-size:14.5px;white-space:nowrap;box-shadow:0 0 24px var(--glow);transition:transform .2s,box-shadow .2s" style-hover="transform:translateY(-2px);box-shadow:0 6px 30px var(--glow)">Get Started
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+      </a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <header id="top" style="position:relative;z-index:1;max-width:1240px;margin:0 auto;padding:clamp(40px,7vw,90px) 28px clamp(30px,5vw,60px);display:grid;grid-template-columns:1.05fr .95fr;gap:40px;align-items:center">
+    <div class="pg-hero-copy">
+      <div style="display:inline-flex;align-items:center;gap:9px;padding:7px 13px;border:1px solid var(--line-2);border-radius:100px;background:var(--bg-elev);font-family:'JetBrains Mono';font-size:12px;letter-spacing:.02em;color:var(--fg-dim)">
+        <span style="width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px var(--accent);animation:pg-blink 2s ease-in-out infinite"></span>
+        ZERO-KNOWLEDGE PASSWORD INFRASTRUCTURE
+      </div>
+      <h1 style="font-family:'Space Grotesk';font-weight:700;font-size:clamp(40px,6vw,72px);line-height:1.02;letter-spacing:-.035em;margin:22px 0 0;text-wrap:balance">Share passwords.<br>Never <span style="color:var(--accent);position:relative">expose<svg style="position:absolute;left:0;bottom:-6px;width:100%" height="10" viewBox="0 0 200 10" preserveAspectRatio="none" fill="none" stroke="var(--accent)" stroke-width="3" stroke-linecap="round"><path d="M3 6c40-5 90-5 194 1"></path></svg></span> them.</h1>
+      <p style="max-width:520px;font-size:clamp(16px,1.6vw,19px);line-height:1.6;color:var(--fg-dim);margin:24px 0 0;text-wrap:pretty">PassGuard stores, generates and shares credentials with true end-to-end encryption. Recipients autofill and submit — but the plaintext is <em style="color:var(--fg);font-style:normal">frozen at the browser level</em> and never revealed. Not to them. Not to us.</p>
+      <div style="display:flex;flex-wrap:wrap;gap:14px;margin:34px 0 0">
+        <a href="/login" style="display:inline-flex;align-items:center;gap:9px;padding:14px 24px;border-radius:12px;background:var(--accent);color:var(--accent-ink);font-weight:600;font-size:16px;box-shadow:0 0 30px var(--glow);transition:transform .2s,box-shadow .2s" style-hover="transform:translateY(-2px);box-shadow:0 8px 40px var(--glow)">Get Started
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+        </a>
+        <a href="#how" style="display:inline-flex;align-items:center;gap:9px;padding:14px 24px;border-radius:12px;border:1px solid var(--line-2);background:var(--bg-elev);font-weight:600;font-size:16px;transition:border-color .2s,transform .2s" style-hover="border-color:var(--accent);transform:translateY(-2px)">See how it works</a>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:10px;margin:34px 0 0;font-family:'JetBrains Mono';font-size:12px;color:var(--fg-faint)">
+        <span style="padding:6px 11px;border:1px solid var(--line);border-radius:8px">AES-256-GCM</span>
+        <span style="padding:6px 11px;border:1px solid var(--line);border-radius:8px">RSA-OAEP 2048</span>
+        <span style="padding:6px 11px;border:1px solid var(--line);border-radius:8px">PBKDF2 · 100K</span>
+      </div>
+    </div>
+
+    <!-- 3D SECURITY CORE -->
+    <div class="pg-hero-visual" style="position:relative;height:min(520px,58vw);display:grid;place-items:center">
+      <div style="position:absolute;width:340px;height:340px;border-radius:50%;background:radial-gradient(circle,var(--glow),transparent 65%);filter:blur(20px);animation:pg-pulse 5s ease-in-out infinite"></div>
+      <div style="perspective:1200px;width:100%;height:100%;display:grid;place-items:center">
+        <div ref="{{ setScene }}" style="--rx:-12deg;--ry:-20deg;transform-style:preserve-3d;transform:rotateX(var(--rx)) rotateY(var(--ry));transition:transform .25s ease-out;position:relative;width:300px;height:300px;display:grid;place-items:center">
+          <!-- flat holographic discs -->
+          <div style="position:absolute;transform:rotateX(74deg);transform-style:preserve-3d">
+            <div style="position:absolute;width:360px;height:360px;margin:-180px;border:1px solid var(--line-2);border-radius:50%;animation:pg-disc 22s linear infinite"><span style="position:absolute;top:-4px;left:50%;width:8px;height:8px;margin-left:-4px;border-radius:50%;background:var(--accent);box-shadow:0 0 12px var(--accent)"></span></div>
+            <div style="position:absolute;width:250px;height:250px;margin:-125px;border:1px dashed var(--line-2);border-radius:50%;animation:pg-disc-rev 16s linear infinite"></div>
+            <div style="position:absolute;width:150px;height:150px;margin:-75px;border:1px solid var(--accent);opacity:.4;border-radius:50%;animation:pg-disc 11s linear infinite"><span style="position:absolute;bottom:-4px;left:50%;width:6px;height:6px;margin-left:-3px;border-radius:50%;background:var(--accent-2);box-shadow:0 0 10px var(--accent-2)"></span></div>
+          </div>
+          <!-- orbiting credential chips -->
+          <div style="position:absolute;transform-style:preserve-3d;animation:pg-spin 26s linear infinite">
+            <div style="position:absolute;transform:rotateY(0deg) translateZ(160px);transform-style:preserve-3d"><div style="animation:pg-spin-rev 26s linear infinite;transform-style:preserve-3d"><div style="transform:rotateY(0deg);display:flex;align-items:center;gap:6px;padding:9px 12px;border-radius:10px;background:var(--bg-elev2);border:1px solid var(--line-2);box-shadow:0 12px 40px rgba(0,0,0,.5);font-family:'JetBrains Mono';font-size:11px;color:var(--fg-dim)"><span style="color:var(--accent)">◆</span>RSA·2048</div></div></div>
+            <div style="position:absolute;transform:rotateY(90deg) translateZ(160px);transform-style:preserve-3d"><div style="animation:pg-spin-rev 26s linear infinite;transform-style:preserve-3d"><div style="transform:rotateY(-90deg);display:flex;align-items:center;gap:6px;padding:9px 12px;border-radius:10px;background:var(--bg-elev2);border:1px solid var(--line-2);box-shadow:0 12px 40px rgba(0,0,0,.5);font-family:'JetBrains Mono';font-size:11px;color:var(--fg-dim)"><span style="color:var(--accent-2)">✦</span>AES·256</div></div></div>
+            <div style="position:absolute;transform:rotateY(180deg) translateZ(160px);transform-style:preserve-3d"><div style="animation:pg-spin-rev 26s linear infinite;transform-style:preserve-3d"><div style="transform:rotateY(-180deg);display:flex;align-items:center;gap:6px;padding:9px 12px;border-radius:10px;background:var(--bg-elev2);border:1px solid var(--line-2);box-shadow:0 12px 40px rgba(0,0,0,.5);font-family:'JetBrains Mono';font-size:11px;color:var(--fg-dim)">••••••••</div></div></div>
+            <div style="position:absolute;transform:rotateY(270deg) translateZ(160px);transform-style:preserve-3d"><div style="animation:pg-spin-rev 26s linear infinite;transform-style:preserve-3d"><div style="transform:rotateY(-270deg);display:grid;place-items:center;width:38px;height:38px;border-radius:10px;background:var(--accent);box-shadow:0 12px 40px var(--glow)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent-ink)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7a4 4 0 1 0-4 4h9l-2 2m2-2-2-2"></path></svg></div></div></div>
+          </div>
+          <!-- central vault core -->
+          <div style="transform-style:preserve-3d;animation:pg-float 6s ease-in-out infinite">
+            <div style="width:130px;height:130px;border-radius:26px;background:linear-gradient(155deg,var(--bg-elev2),var(--bg-elev));border:1px solid var(--line-2);box-shadow:0 30px 70px rgba(0,0,0,.6),inset 0 1px 0 var(--line-2);display:grid;place-items:center;position:relative">
+              <div style="position:absolute;inset:0;border-radius:26px;background:radial-gradient(circle at 50% 35%,var(--glow),transparent 60%)"></div>
+              <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="filter:drop-shadow(0 0 10px var(--glow))"><rect x="4" y="10" width="16" height="11" rx="2.5"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path><circle cx="12" cy="15" r="1.6"></circle><path d="M12 16.6V18"></path></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- TRUST STRIP -->
+  <section style="position:relative;z-index:1;border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--bg-elev)">
+    <div style="max-width:1240px;margin:0 auto;padding:26px 28px;display:flex;flex-wrap:wrap;align-items:center;gap:22px 40px">
+      <span style="font-family:'JetBrains Mono';font-size:11.5px;letter-spacing:.08em;color:var(--fg-faint);text-transform:uppercase">Built on standards</span>
+      <sc-for list="{{ standards }}" as="s" hint-placeholder-count="5">
+        <div style="display:flex;flex-direction:column;gap:3px">
+          <span style="font-family:'JetBrains Mono';font-size:14px;font-weight:600;color:var(--fg)">{{ s.tag }}</span>
+          <span style="font-size:12.5px;color:var(--fg-faint)">{{ s.d }}</span>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <!-- DEMO VIDEO -->
+  <section data-reveal="" style="position:relative;z-index:1;max-width:1240px;margin:clamp(56px,8vw,104px) auto 0;padding:0 28px">
+    <div style="text-align:center;max-width:660px;margin:0 auto">
+      <span style="display:inline-flex;align-items:center;gap:8px;font-family:'JetBrains Mono';font-size:12px;letter-spacing:.06em;color:var(--accent);text-transform:uppercase"><span style="width:7px;height:7px;border-radius:50%;background:#ff5470;box-shadow:0 0 10px #ff5470;animation:pg-blink 1.6s ease-in-out infinite"></span>Live demo</span>
+      <h2 style="font-family:'Space Grotesk';font-weight:700;font-size:clamp(28px,4vw,44px);letter-spacing:-.03em;margin:14px 0 0;text-wrap:balance">See it work in 90 seconds</h2>
+      <p style="font-size:17px;color:var(--fg-dim);line-height:1.6;margin:16px auto 0;max-width:520px">No jargon. Add a login, share it with a teammate, and watch them sign in — without ever seeing the password.</p>
+    </div>
+
+    <div style="position:relative;margin:44px auto 0;max-width:980px">
+      <div data-parallax="0.05" style="position:absolute;top:-40px;left:-60px;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,var(--glow),transparent 65%);filter:blur(14px);pointer-events:none"></div>
+      <div data-parallax="-0.06" style="position:absolute;bottom:-50px;right:-50px;width:240px;height:240px;border-radius:50%;background:radial-gradient(circle,rgba(139,123,255,.22),transparent 65%);filter:blur(16px);pointer-events:none"></div>
+
+      <div style="position:relative;border:1px solid var(--line-2);border-radius:18px;overflow:hidden;background:var(--bg-elev);box-shadow:0 40px 100px rgba(0,0,0,.5)">
+        <div style="display:flex;align-items:center;gap:10px;padding:13px 16px;border-bottom:1px solid var(--line);background:var(--bg-elev2)">
+          <span style="display:flex;gap:7px"><span style="width:11px;height:11px;border-radius:50%;background:#ff5f57"></span><span style="width:11px;height:11px;border-radius:50%;background:#febc2e"></span><span style="width:11px;height:11px;border-radius:50%;background:#28c840"></span></span>
+          <span style="margin:0 auto;display:inline-flex;align-items:center;gap:8px;padding:5px 16px;border-radius:8px;background:var(--bg);border:1px solid var(--line);font-family:'JetBrains Mono';font-size:12px;color:var(--fg-dim)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg>app.passguard.io</span>
+        </div>
+        <div style="position:relative;aspect-ratio:16/9;background:radial-gradient(700px 400px at 50% 40%,var(--bg-elev2),var(--bg));display:grid;place-items:center;overflow:hidden">
+          <div aria-hidden="true" style="position:absolute;inset:0;opacity:.4;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:44px 44px"></div>
+          <div aria-hidden="true" style="position:absolute;left:0;right:0;height:120px;top:50%;margin-top:-60px;background:linear-gradient(var(--glow),transparent);animation:pg-scan 5s ease-in-out infinite"></div>
+          <div style="position:relative;text-align:center">
+            <button style="display:grid;place-items:center;width:84px;height:84px;margin:0 auto;border-radius:50%;background:var(--accent);color:var(--accent-ink);animation:pg-play 2.6s ease-in-out infinite;transition:transform .2s" style-hover="transform:scale(1.08)">
+              <svg width="30" height="30" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"></path></svg>
+            </button>
+            <div style="margin:18px 0 0;font-family:'JetBrains Mono';font-size:12.5px;color:var(--fg-faint)">Drop in your product demo — swap this frame for your video</div>
+          </div>
+        </div>
+      </div>
+
+      <div data-parallax="0.08" style="position:absolute;top:22px;right:-26px;display:flex;align-items:center;gap:9px;padding:11px 15px;border-radius:12px;background:var(--bg-elev2);border:1px solid var(--line-2);box-shadow:0 16px 40px rgba(0,0,0,.4)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>
+        <div><div style="font-weight:600;font-size:13px">Autofilled &amp; submitted</div><div style="font-size:11px;color:var(--fg-faint);font-family:'JetBrains Mono'">password stayed hidden</div></div>
+      </div>
+      <div data-parallax="-0.07" style="position:absolute;bottom:-16px;left:-28px;display:flex;align-items:end;gap:4px;padding:12px 15px;border-radius:12px;background:var(--bg-elev2);border:1px solid var(--line-2);box-shadow:0 16px 40px rgba(0,0,0,.4)">
+        <span style="width:6px;height:26px;border-radius:3px;background:var(--accent);transform-origin:bottom;animation:pg-bar 1.4s ease-in-out infinite"></span>
+        <span style="width:6px;height:26px;border-radius:3px;background:var(--accent);transform-origin:bottom;animation:pg-bar 1.4s ease-in-out .18s infinite"></span>
+        <span style="width:6px;height:26px;border-radius:3px;background:var(--accent);transform-origin:bottom;animation:pg-bar 1.4s ease-in-out .36s infinite"></span>
+        <span style="margin-left:6px;font-weight:600;font-size:13px;align-self:center">Strong by default</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- USP SPOTLIGHT -->
+  <section data-reveal="" style="position:relative;z-index:1;max-width:1240px;margin:clamp(60px,9vw,120px) auto 0;padding:0 28px">
+    <div style="border:1px solid var(--line);border-radius:24px;background:linear-gradient(180deg,var(--bg-elev),var(--bg));overflow:hidden;position:relative">
+      <div style="position:absolute;inset:0;background:radial-gradient(700px 300px at 50% 0%,var(--glow),transparent 60%);opacity:.5;pointer-events:none"></div>
+      <div style="position:relative;padding:clamp(30px,5vw,58px)">
+        <span style="font-family:'JetBrains Mono';font-size:12px;letter-spacing:.06em;color:var(--accent);text-transform:uppercase">The difference</span>
+        <h2 style="font-family:'Space Grotesk';font-weight:700;font-size:clamp(28px,4vw,46px);line-height:1.06;letter-spacing:-.03em;margin:14px 0 0;max-width:720px;text-wrap:balance">Sharing without exposure. The one thing other vaults can't do.</h2>
+        <p style="max-width:640px;font-size:17px;line-height:1.6;color:var(--fg-dim);margin:18px 0 0">A teammate needs access, not your secret. PassGuard sends an <strong style="color:var(--fg);font-weight:600">RSA-encrypted envelope</strong> only their key can open — then the extension autofills and auto-submits while locking down every control that could leak the plaintext.</p>
+
+        <!-- share diagram -->
+        <div style="margin:44px 0 0;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:clamp(12px,3vw,34px)" class="pg-share">
+          <div style="border:1px solid var(--line-2);border-radius:18px;background:var(--bg-elev2);padding:22px">
+            <div style="display:flex;align-items:center;gap:10px"><span style="display:grid;place-items:center;width:34px;height:34px;border-radius:9px;background:var(--accent);color:var(--accent-ink);font-weight:700;font-family:'Space Grotesk'">A</span><div><div style="font-weight:600;font-size:15px">You (owner)</div><div style="font-size:12px;color:var(--fg-faint);font-family:'JetBrains Mono'">holds plaintext</div></div></div>
+            <div style="margin:16px 0 0;padding:12px;border:1px solid var(--line);border-radius:11px;background:var(--bg);font-family:'JetBrains Mono';font-size:13px;color:var(--fg-dim)">github.com<br><span style="color:var(--accent)">••••••••••••</span></div>
+          </div>
+          <div style="position:relative;height:60px;display:grid;place-items:center;min-width:120px">
+            <div style="width:100%;height:2px;background:repeating-linear-gradient(90deg,var(--line-2) 0 6px,transparent 6px 12px)"></div>
+            <div style="position:absolute;top:50%;left:6%;transform:translate(-50%,-50%);display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:var(--bg-elev2);border:1px solid var(--accent);box-shadow:0 0 16px var(--glow);animation:pg-travel 4.5s ease-in-out infinite">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path></svg>
+            </div>
+            <span style="position:absolute;bottom:-4px;font-family:'JetBrains Mono';font-size:10.5px;color:var(--fg-faint);white-space:nowrap">RSA-OAEP envelope</span>
+          </div>
+          <div style="border:1px solid var(--line-2);border-radius:18px;background:var(--bg-elev2);padding:22px">
+            <div style="display:flex;align-items:center;gap:10px"><span style="display:grid;place-items:center;width:34px;height:34px;border-radius:9px;background:var(--accent-2);color:#fff;font-weight:700;font-family:'Space Grotesk'">B</span><div><div style="font-weight:600;font-size:15px">Teammate</div><div style="font-size:12px;color:var(--fg-faint);font-family:'JetBrains Mono'">never sees plaintext</div></div></div>
+            <div style="margin:16px 0 0;padding:12px;border:1px solid var(--line);border-radius:11px;background:var(--bg);display:flex;align-items:center;justify-content:space-between;font-family:'JetBrains Mono';font-size:13px;color:var(--fg-dim)">github.com<span style="display:inline-flex;align-items:center;gap:6px;color:var(--accent)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>autofilled</span></div>
+          </div>
+        </div>
+
+        <div style="margin:40px 0 0;display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px">
+          <div style="display:flex;gap:12px"><span style="color:var(--accent);margin-top:2px">▹</span><div><div style="font-weight:600;font-size:15px">Controls frozen</div><div style="font-size:14px;color:var(--fg-dim);line-height:1.5">Copy, reveal and inspect are disabled the instant a shared field is filled.</div></div></div>
+          <div style="display:flex;gap:12px"><span style="color:var(--accent);margin-top:2px">▹</span><div><div style="font-weight:600;font-size:15px">Window frozen on submit</div><div style="font-size:14px;color:var(--fg-dim);line-height:1.5">The extension holds the window at the browser level while the request is sent.</div></div></div>
+          <div style="display:flex;gap:12px"><span style="color:var(--accent);margin-top:2px">▹</span><div><div style="font-weight:600;font-size:15px">No leak paths</div><div style="font-size:14px;color:var(--fg-dim);line-height:1.5">Auto-submit means the plaintext never touches a clipboard, log or the DOM in the clear.</div></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section id="features" data-reveal="" style="position:relative;z-index:1;max-width:1240px;margin:clamp(60px,9vw,120px) auto 0;padding:0 28px">
+    <div style="display:flex;align-items:end;justify-content:space-between;gap:20px;flex-wrap:wrap">
+      <div>
+        <span style="font-family:'JetBrains Mono';font-size:12px;letter-spacing:.06em;color:var(--accent);text-transform:uppercase">Everything in the vault</span>
+        <h2 style="font-family:'Space Grotesk';font-weight:700;font-size:clamp(28px,4vw,44px);letter-spacing:-.03em;margin:14px 0 0">One tool for the whole credential lifecycle</h2>
+      </div>
+      <p style="max-width:340px;font-size:15px;color:var(--fg-dim);line-height:1.6">Generate, measure, store, share and enforce — all under the same zero-knowledge model.</p>
+    </div>
+    <div style="margin:40px 0 0;display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px" class="pg-feat">
+      <div data-reveal="" style="grid-column:span 2;border:1px solid var(--line);border-radius:18px;background:var(--bg-elev);padding:26px;transition:border-color .25s,transform .25s;min-height:200px;display:flex;flex-direction:column;justify-content:space-between" style-hover="border-color:var(--line-2);transform:translateY(-3px)" class="pg-card">
+        <div style="display:grid;place-items:center;width:46px;height:46px;border-radius:12px;background:var(--bg-elev2);border:1px solid var(--line)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l2-6 4 12 2-6h6"></path></svg></div>
+        <div><div style="font-family:'Space Grotesk';font-weight:600;font-size:20px">Password strength checker</div><p style="font-size:15px;color:var(--fg-dim);line-height:1.55;margin:8px 0 14px">Real-time entropy scoring flags reused, breached and weak passwords as you type — with actionable fixes.</p>
+        <div style="display:flex;gap:5px;max-width:280px">
+          <span style="flex:1;height:6px;border-radius:3px;background:var(--accent)"></span><span style="flex:1;height:6px;border-radius:3px;background:var(--accent)"></span><span style="flex:1;height:6px;border-radius:3px;background:var(--accent)"></span><span style="flex:1;height:6px;border-radius:3px;background:var(--line-2)"></span>
+        </div></div>
+      </div>
+      <div data-reveal="" style="border:1px solid var(--line);border-radius:18px;background:var(--bg-elev);padding:26px;transition:border-color .25s,transform .25s" style-hover="border-color:var(--line-2);transform:translateY(-3px)">
+        <div style="display:grid;place-items:center;width:46px;height:46px;border-radius:12px;background:var(--bg-elev2);border:1px solid var(--line)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M3 12h18M6 6l12 12M18 6 6 18"></path></svg></div>
+        <div style="font-family:'Space Grotesk';font-weight:600;font-size:19px;margin:16px 0 0">Strong generator</div><p style="font-size:14.5px;color:var(--fg-dim);line-height:1.55;margin:8px 0 0">One-click cryptographically random passwords and passphrases, tuned to each site's rules.</p>
+      </div>
+      <div data-reveal="" style="border:1px solid var(--line);border-radius:18px;background:var(--bg-elev);padding:26px;transition:border-color .25s,transform .25s" style-hover="border-color:var(--line-2);transform:translateY(-3px)">
+        <div style="display:grid;place-items:center;width:46px;height:46px;border-radius:12px;background:var(--bg-elev2);border:1px solid var(--line)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="7" rx="1.5"></rect><rect x="3" y="14" width="11" height="6" rx="1.5"></rect></svg></div>
+        <div style="font-family:'Space Grotesk';font-weight:600;font-size:19px;margin:16px 0 0">Vault &amp; dashboard</div><p style="font-size:14.5px;color:var(--fg-dim);line-height:1.55;margin:8px 0 0">A clean, searchable home for every credential — organised, tagged and ready to autofill.</p>
+      </div>
+      <div data-reveal="" style="border:1px solid var(--line);border-radius:18px;background:var(--bg-elev);padding:26px;transition:border-color .25s,transform .25s" style-hover="border-color:var(--line-2);transform:translateY(-3px)">
+        <div style="display:grid;place-items:center;width:46px;height:46px;border-radius:12px;background:var(--bg-elev2);border:1px solid var(--line)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><path d="M8.6 13.5 15.4 17.5M15.4 6.5 8.6 10.5"></path></svg></div>
+        <div style="font-family:'Space Grotesk';font-weight:600;font-size:19px;margin:16px 0 0">Secure sharing</div><p style="font-size:14.5px;color:var(--fg-dim);line-height:1.55;margin:8px 0 0">Grant access without handing over the secret — revoke it just as cleanly, any time.</p>
+      </div>
+      <div data-reveal="" style="border:1px solid var(--line);border-radius:18px;background:var(--bg-elev);padding:26px;transition:border-color .25s,transform .25s" style-hover="border-color:var(--line-2);transform:translateY(-3px)">
+        <div style="display:grid;place-items:center;width:46px;height:46px;border-radius:12px;background:var(--bg-elev2);border:1px solid var(--line)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v12H4z"></path><path d="M2 20h20M9 8l3 3 3-3"></path></svg></div>
+        <div style="font-family:'Space Grotesk';font-weight:600;font-size:19px;margin:16px 0 0">Web extension</div><p style="font-size:14.5px;color:var(--fg-dim);line-height:1.55;margin:8px 0 0">Autofill and auto-submit on any site, enforcing the freeze that keeps shared secrets hidden.</p>
+      </div>
+      <div data-reveal="" style="border:1px solid var(--line);border-radius:18px;background:var(--bg-elev);padding:26px;transition:border-color .25s,transform .25s" style-hover="border-color:var(--line-2);transform:translateY(-3px)">
+        <div style="display:grid;place-items:center;width:46px;height:46px;border-radius:12px;background:var(--bg-elev2);border:1px solid var(--line)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="3" width="12" height="18" rx="2.5"></rect><path d="M11 18h2"></path></svg></div>
+        <div style="font-family:'Space Grotesk';font-weight:600;font-size:19px;margin:16px 0 0">Multi-factor auth</div><p style="font-size:14.5px;color:var(--fg-dim);line-height:1.55;margin:8px 0 0">Layer MFA over the master password so account access needs more than one proof.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- IN PLAIN ENGLISH -->
+  <section data-reveal="" style="position:relative;z-index:1;max-width:1240px;margin:clamp(60px,9vw,120px) auto 0;padding:0 28px">
+    <div data-parallax="0.04" style="position:absolute;top:-30px;right:8%;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,var(--glow),transparent 65%);filter:blur(18px);pointer-events:none"></div>
+    <span style="font-family:'JetBrains Mono';font-size:12px;letter-spacing:.06em;color:var(--accent);text-transform:uppercase">In plain English</span>
+    <h2 style="font-family:'Space Grotesk';font-weight:700;font-size:clamp(28px,4vw,44px);letter-spacing:-.03em;margin:14px 0 0;max-width:680px">The important part, without the acronyms</h2>
+    <div style="margin:40px 0 0;display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px" class="pg-plain">
+      <div data-reveal="" style="border:1px solid var(--line);border-radius:18px;background:var(--bg-elev);padding:24px">
+        <div style="position:relative;width:60px;height:60px;display:grid;place-items:center">
+          <span style="position:absolute;inset:0;border:1px solid var(--accent);border-radius:50%;opacity:.5;animation:pg-ring2 3s ease-in-out infinite"></span>
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="transform-origin:50% 62%;animation:pg-turn 3.4s ease-in-out infinite"><circle cx="8" cy="8" r="4"></circle><path d="M11 11l8 8M16 16l3-3M14 18l2-2"></path></svg>
+        </div>
+        <div style="font-family:'Space Grotesk';font-weight:600;font-size:18px;margin:16px 0 0">Only you hold the key</div>
+        <p style="font-size:14.5px;color:var(--fg-dim);line-height:1.55;margin:7px 0 0">Your master password unlocks everything — and it never leaves your device.</p>
+      </div>
+      <div data-reveal="" style="border:1px solid var(--line);border-radius:18px;background:var(--bg-elev);padding:24px">
+        <div style="position:relative;width:60px;height:60px;display:grid;place-items:center">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12Z"></path><circle cx="12" cy="12" r="3"></circle><path d="M3 3 21 21" stroke-dasharray="26" style="animation:pg-scan 3s ease-in-out infinite"></path></svg>
+        </div>
+        <div style="font-family:'Space Grotesk';font-weight:600;font-size:18px;margin:16px 0 0">We can't read it</div>
+        <p style="font-size:14.5px;color:var(--fg-dim);line-height:1.55;margin:7px 0 0">Everything is scrambled before it reaches us. Even our servers only ever see gibberish.</p>
+      </div>
+      <div data-reveal="" style="border:1px solid var(--line);border-radius:18px;background:var(--bg-elev);padding:24px">
+        <div style="position:relative;width:70px;height:60px">
+          <span style="position:absolute;left:2px;top:20px;width:16px;height:16px;border-radius:50%;background:var(--accent)"></span>
+          <span style="position:absolute;right:2px;top:20px;width:16px;height:16px;border-radius:50%;background:var(--accent-2)"></span>
+          <span style="position:absolute;top:24px;left:18px;right:18px;height:2px;background:repeating-linear-gradient(90deg,var(--line-2) 0 4px,transparent 4px 8px)"></span>
+          <span style="position:absolute;top:19px;width:12px;height:12px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px var(--glow);animation:pg-slide 3.2s ease-in-out infinite"></span>
+        </div>
+        <div style="font-family:'Space Grotesk';font-weight:600;font-size:18px;margin:16px 0 0">Share access, not secrets</div>
+        <p style="font-size:14.5px;color:var(--fg-dim);line-height:1.55;margin:7px 0 0">Give a teammate a login they can use but can't see — and take it back whenever you want.</p>
+      </div>
+      <div data-reveal="" style="border:1px solid var(--line);border-radius:18px;background:var(--bg-elev);padding:24px">
+        <div style="position:relative;width:60px;height:60px;display:grid;place-items:center;overflow:hidden">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 5v6c0 5 3.5 8 8 11 4.5-3 8-6 8-11V5l-8-3Z"></path></svg>
+          <span style="position:absolute;left:8px;right:8px;height:2px;background:var(--accent);box-shadow:0 0 10px var(--accent);animation:pg-scan 2.6s ease-in-out infinite"></span>
+        </div>
+        <div style="font-family:'Space Grotesk';font-weight:600;font-size:18px;margin:16px 0 0">Locked at the browser</div>
+        <p style="font-size:14.5px;color:var(--fg-dim);line-height:1.55;margin:7px 0 0">When a shared login is used, the page is frozen so the password can't be copied or peeked at.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECURITY -->
+  <section id="security" data-reveal="" style="position:relative;z-index:1;max-width:1240px;margin:clamp(60px,9vw,120px) auto 0;padding:0 28px">
+    <span style="font-family:'JetBrains Mono';font-size:12px;letter-spacing:.06em;color:var(--accent);text-transform:uppercase">Under the hood</span>
+    <h2 style="font-family:'Space Grotesk';font-weight:700;font-size:clamp(28px,4vw,44px);letter-spacing:-.03em;margin:14px 0 0;max-width:760px">Security you can read line by line</h2>
+    <p style="max-width:620px;font-size:16px;color:var(--fg-dim);line-height:1.6;margin:16px 0 0">For the technically curious — the exact standards behind everything above. Skip it if you like; it all just works.</p>
+    <!-- ARCHITECTURE DIAGRAM -->
+    <div data-reveal="" style="margin:38px 0 0;border:1px solid var(--line);border-radius:22px;background:var(--bg-elev);overflow:hidden">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;padding:20px 24px;border-bottom:1px solid var(--line)">
+        <div style="display:flex;align-items:center;gap:11px"><span style="width:9px;height:9px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px var(--accent)"></span><span style="font-family:'Space Grotesk';font-weight:600;font-size:17px">How your data moves</span></div>
+        <span style="font-family:'JetBrains Mono';font-size:11.5px;color:var(--fg-faint)">encrypted before it ever leaves your device →</span>
+      </div>
+      <div style="padding:14px 14px 6px">
+        <img src="uploads/Gemini_Generated_Image_k4lgnyk4lgnyk4lg.png" alt="PassGuard architecture: client-side zero-knowledge crypto flowing through the Node.js API into encrypted storage, with a zero-knowledge sharing lane" style="width:100%;height:auto;display:block;border-radius:12px">
+      </div>
+    </div>
+
+    <div style="margin:32px 0 0;display:grid;grid-template-columns:1fr 1fr;gap:18px" class="pg-sec">
+      <div style="border:1px solid var(--line);border-radius:20px;background:var(--bg-elev);overflow:hidden">
+        <div style="padding:22px 24px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px">
+          <span style="display:grid;place-items:center;width:40px;height:40px;border-radius:11px;background:var(--accent);color:var(--accent-ink)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path></svg></span>
+          <div><div style="font-family:'Space Grotesk';font-weight:600;font-size:19px">Client-side</div><div style="font-family:'JetBrains Mono';font-size:12px;color:var(--accent)">ZERO-KNOWLEDGE</div></div>
+        </div>
+        <div style="padding:8px 24px 20px">
+          <div style="padding:18px 0;border-bottom:1px solid var(--line)"><div style="font-family:'JetBrains Mono';font-size:13.5px;font-weight:600;color:var(--fg)">RSA-OAEP · 2048-bit</div><p style="font-size:14px;color:var(--fg-dim);line-height:1.55;margin:6px 0 0">Asymmetric key pairs generated via <span style="font-family:'JetBrains Mono';color:var(--fg)">window.crypto.subtle</span> secure every password shared between users.</p></div>
+          <div style="padding:18px 0;border-bottom:1px solid var(--line)"><div style="font-family:'JetBrains Mono';font-size:13.5px;font-weight:600;color:var(--fg)">PBKDF2 key derivation</div><p style="font-size:14px;color:var(--fg-dim);line-height:1.55;margin:6px 0 0">A 256-bit AES-GCM key is derived from your master password with 100,000 iterations of HMAC-SHA-256 and a 16-byte random salt.</p></div>
+          <div style="padding:18px 0 0"><div style="font-family:'JetBrains Mono';font-size:13.5px;font-weight:600;color:var(--fg)">AES-GCM · 256-bit</div><p style="font-size:14px;color:var(--fg-dim);line-height:1.55;margin:6px 0 0">Your private key is encrypted before it ever reaches the database — a compromised server still can't read it without your master password.</p></div>
+        </div>
+      </div>
+      <div style="border:1px solid var(--line);border-radius:20px;background:var(--bg-elev);overflow:hidden">
+        <div style="padding:22px 24px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px">
+          <span style="display:grid;place-items:center;width:40px;height:40px;border-radius:11px;background:var(--accent-2);color:#fff"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="7" rx="1.5"></rect><rect x="3" y="13" width="18" height="7" rx="1.5"></rect><path d="M7 7.5h.01M7 16.5h.01"></path></svg></span>
+          <div><div style="font-family:'Space Grotesk';font-weight:600;font-size:19px">Server-side</div><div style="font-family:'JetBrains Mono';font-size:12px;color:var(--accent-2)">DEFENCE IN DEPTH</div></div>
+        </div>
+        <div style="padding:8px 24px 20px">
+          <div style="padding:18px 0;border-bottom:1px solid var(--line)"><div style="font-family:'JetBrains Mono';font-size:13.5px;font-weight:600;color:var(--fg)">AES-256-CBC encryption</div><p style="font-size:14px;color:var(--fg-dim);line-height:1.55;margin:6px 0 0">Stored credential records are encrypted with Node's <span style="font-family:'JetBrains Mono';color:var(--fg)">crypto</span> module; a unique IV is appended to every cipher as <span style="font-family:'JetBrains Mono';color:var(--fg)">iv:encryptedHex</span>.</p></div>
+          <div style="padding:18px 0;border-bottom:1px solid var(--line)"><div style="font-family:'JetBrains Mono';font-size:13.5px;font-weight:600;color:var(--fg)">bcryptjs hashing</div><p style="font-size:14px;color:var(--fg-dim);line-height:1.55;margin:6px 0 0">Login passwords are hashed with a salted work-factor — cleartext is never written to disk.</p></div>
+          <div style="padding:18px 0 0"><div style="font-family:'JetBrains Mono';font-size:13.5px;font-weight:600;color:var(--fg)">Layered by design</div><p style="font-size:14px;color:var(--fg-dim);line-height:1.55;margin:6px 0 0">Client-side zero-knowledge and server-side encryption compound — neither layer trusts the other with plaintext.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMPARISON -->
+  <section id="compare" data-reveal="" style="position:relative;z-index:1;max-width:1240px;margin:clamp(60px,9vw,120px) auto 0;padding:0 28px">
+    <div style="max-width:720px">
+      <span style="font-family:'JetBrains Mono';font-size:12px;letter-spacing:.06em;color:var(--accent);text-transform:uppercase">Head to head</span>
+      <h2 style="font-family:'Space Grotesk';font-weight:700;font-size:clamp(28px,4vw,44px);letter-spacing:-.03em;margin:14px 0 0;text-wrap:balance">How PassGuard outperforms traditional vaults</h2>
+      <p style="font-size:16px;color:var(--fg-dim);line-height:1.6;margin:16px 0 0">Traditional password managers copy cleartext to the clipboard or DOM. PassGuard seals it inside extension runtime memory — so the plaintext never surfaces.</p>
+    </div>
+    <div style="display:inline-flex;align-items:center;gap:10px;margin:22px 0 0;padding:8px 14px;border-radius:100px;border:1px solid var(--accent);background:color-mix(in srgb,var(--accent) 10%,transparent)">
+      <span style="font-family:'Space Grotesk';font-weight:700;font-size:15px;color:var(--accent);white-space:nowrap">8 / 8</span>
+      <span style="font-size:13.5px;color:var(--fg-dim)">protections covered — more than any mainstream vault</span>
+    </div>
+
+    <div style="margin:32px 0 0;overflow-x:auto;padding-bottom:4px">
+      <div style="min-width:760px">
+        <!-- header -->
+        <div style="display:grid;grid-template-columns:minmax(210px,1.7fr) 182px 1fr 1fr 1.15fr;align-items:end">
+          <div style="padding:0 20px 14px;font-family:'JetBrains Mono';font-size:12.5px;letter-spacing:.03em;color:var(--fg-faint)">Feature spec</div>
+          <div style="position:relative;padding:16px 16px 14px;display:flex;flex-direction:column;align-items:center;gap:7px;background:color-mix(in srgb,var(--accent) 13%,var(--bg-elev));border:1px solid color-mix(in srgb,var(--accent) 42%,transparent);border-bottom:none;border-radius:16px 16px 0 0">
+            <span style="position:absolute;top:0;left:18px;right:18px;height:3px;border-radius:3px;background:var(--accent);box-shadow:0 0 12px var(--glow)"></span>
+            <span style="font-family:'Space Grotesk';font-weight:700;font-size:16px;color:var(--accent)">Pass Guard</span>
+            <span style="font-family:'JetBrains Mono';font-size:9.5px;letter-spacing:.08em;color:var(--accent-ink);background:var(--accent);border-radius:5px;padding:2px 7px">RECOMMENDED</span>
+          </div>
+          <div style="padding:0 12px 14px;display:flex;justify-content:center;font-family:'JetBrains Mono';font-size:13px;color:var(--fg-dim)">1Password</div>
+          <div style="padding:0 12px 14px;display:flex;justify-content:center;font-family:'JetBrains Mono';font-size:13px;color:var(--fg-dim)">Bitwarden</div>
+          <div style="padding:0 12px 14px;display:flex;justify-content:center;font-family:'JetBrains Mono';font-size:13px;color:var(--fg-dim);text-align:center">Slack / Email</div>
+        </div>
+
+        <!-- rows -->
+        <sc-for list="{{ cmp }}" as="r" hint-placeholder-count="8">
+          <div data-reveal="" style="display:grid;grid-template-columns:minmax(210px,1.7fr) 182px 1fr 1fr 1.15fr;align-items:stretch;border-top:1px solid var(--line);transition:background .2s" style-hover="background:color-mix(in srgb,var(--fg) 4%,transparent)">
+            <div style="padding:16px 20px;display:flex;align-items:center;font-weight:600;font-size:15px;color:var(--fg);text-wrap:pretty">{{ r.f }}</div>
+            <div style="padding:16px 14px;display:flex;align-items:center;justify-content:center;gap:8px;background:color-mix(in srgb,var(--accent) 8%,var(--bg-elev));border-left:1px solid color-mix(in srgb,var(--accent) 42%,transparent);border-right:1px solid color-mix(in srgb,var(--accent) 42%,transparent)">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>
+              <span style="font-size:13.5px;font-weight:600;color:var(--accent)">Supported</span>
+            </div>
+            <div style="padding:16px 12px;display:flex;align-items:center;justify-content:center">
+              <sc-if value="{{ r.one }}" hint-placeholder-val="{{ true }}"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="var(--fg-dim)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></sc-if>
+              <sc-if value="{{ r.oneN }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--fg-faint)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6 18 18M18 6 6 18"></path></svg></sc-if>
+            </div>
+            <div style="padding:16px 12px;display:flex;align-items:center;justify-content:center">
+              <sc-if value="{{ r.bit }}" hint-placeholder-val="{{ true }}"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="var(--fg-dim)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></sc-if>
+              <sc-if value="{{ r.bitN }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--fg-faint)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6 18 18M18 6 6 18"></path></svg></sc-if>
+            </div>
+            <div style="padding:16px 12px;display:flex;align-items:center;justify-content:center">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ff5470" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6 18 18M18 6 6 18"></path></svg>
+            </div>
+          </div>
+        </sc-for>
+
+        <!-- tally -->
+        <div style="display:grid;grid-template-columns:minmax(210px,1.7fr) 182px 1fr 1fr 1.15fr;align-items:stretch;border-top:1px solid var(--line-2)">
+          <div style="padding:18px 20px;display:flex;align-items:center;font-family:'JetBrains Mono';font-size:12.5px;letter-spacing:.03em;color:var(--fg-faint)">Protections covered</div>
+          <div style="padding:16px 14px;display:flex;align-items:center;justify-content:center;background:color-mix(in srgb,var(--accent) 13%,var(--bg-elev));border:1px solid color-mix(in srgb,var(--accent) 42%,transparent);border-top:none;border-radius:0 0 16px 16px"><span style="font-family:'Space Grotesk';font-weight:700;font-size:20px;color:var(--accent)">8/8</span></div>
+          <div style="padding:16px 12px;display:flex;align-items:center;justify-content:center"><span style="font-family:'Space Grotesk';font-weight:600;font-size:18px;color:var(--fg-dim)">4/8</span></div>
+          <div style="padding:16px 12px;display:flex;align-items:center;justify-content:center"><span style="font-family:'Space Grotesk';font-weight:600;font-size:18px;color:var(--fg-dim)">4/8</span></div>
+          <div style="padding:16px 12px;display:flex;align-items:center;justify-content:center"><span style="font-family:'Space Grotesk';font-weight:600;font-size:18px;color:#ff5470">0/8</span></div>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;gap:20px;flex-wrap:wrap;margin:18px 0 0;font-family:'JetBrains Mono';font-size:12px;color:var(--fg-faint)">
+      <span style="display:inline-flex;align-items:center;gap:6px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>Supported</span>
+      <span style="display:inline-flex;align-items:center;gap:6px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--fg-faint)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6 18 18M18 6 6 18"></path></svg>Not available</span>
+      <span style="color:var(--fg-faint)">Competitor capabilities based on publicly documented behaviour.</span>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section id="how" data-reveal="" style="position:relative;z-index:1;max-width:1240px;margin:clamp(60px,9vw,120px) auto 0;padding:0 28px">
+    <span style="font-family:'JetBrains Mono';font-size:12px;letter-spacing:.06em;color:var(--accent);text-transform:uppercase">The flow</span>
+    <h2 style="font-family:'Space Grotesk';font-weight:700;font-size:clamp(28px,4vw,44px);letter-spacing:-.03em;margin:14px 0 0">From master password to autofill</h2>
+    <p style="max-width:560px;font-size:16px;color:var(--fg-dim);line-height:1.6;margin:16px 0 0">Follow a single credential as it moves through PassGuard. Scroll to trace the path — the line fills as each stage completes.</p>
+    <div ref="{{ setFlow }}" style="margin:48px 0 0;position:relative">
+      <div style="position:absolute;left:31px;top:14px;bottom:64px;width:2px;background:repeating-linear-gradient(var(--line-2) 0 6px,transparent 6px 12px)"></div>
+      <div ref="{{ setFlowFill }}" style="position:absolute;left:30px;top:14px;width:4px;height:0;border-radius:4px;background:linear-gradient(var(--accent),var(--accent-2));box-shadow:0 0 16px var(--glow);transition:height .12s linear;z-index:1">
+        <span style="position:absolute;left:50%;bottom:-6px;transform:translateX(-50%);width:13px;height:13px;border-radius:50%;background:var(--accent);box-shadow:0 0 16px var(--accent)"></span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:20px">
+
+        <div data-reveal="" data-flow-row="" style="display:flex;gap:22px;align-items:stretch;position:relative">
+          <span data-flow-node="" style="flex:none;display:grid;place-items:center;width:64px;height:64px;border-radius:16px;background:var(--bg-elev);border:1px solid var(--line-2);font-family:'JetBrains Mono';font-weight:600;font-size:17px;color:var(--accent);z-index:2;box-shadow:0 0 0 6px var(--bg);transition:background .35s,color .35s,border-color .35s,box-shadow .35s">01</span>
+          <div style="flex:1;border:1px solid var(--line);border-radius:16px;background:var(--bg-elev);padding:18px 22px;display:flex;gap:18px;align-items:center;justify-content:space-between">
+            <div style="min-width:0">
+              <span style="display:inline-flex;align-items:center;gap:7px;font-family:'JetBrains Mono';font-size:10.5px;letter-spacing:.04em;color:var(--accent);border:1px solid var(--line-2);border-radius:6px;padding:3px 8px"><span style="width:6px;height:6px;border-radius:50%;background:var(--accent)"></span>PLAINTEXT · ON DEVICE</span>
+              <div style="font-family:'Space Grotesk';font-weight:600;font-size:19px;margin:9px 0 0">Your master password stays on your device</div>
+              <p style="font-size:15px;color:var(--fg-dim);line-height:1.55;margin:6px 0 0;max-width:600px">It is never transmitted. Everything sensitive is unlocked locally, in your browser — the server never sees it.</p>
+            </div>
+            <div style="flex:none;display:grid;place-items:center;width:58px;height:58px;border-radius:14px;background:var(--bg-elev2);border:1px solid var(--line)"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2.5"></rect><path d="M8 10V7a4 4 0 0 1 7-2.6"></path><circle cx="12" cy="15" r="1.5" style="animation:pg-blink 1.8s ease-in-out infinite"></circle></svg></div>
+          </div>
+        </div>
+
+        <div data-reveal="" data-flow-row="" style="display:flex;gap:22px;align-items:stretch;position:relative">
+          <span data-flow-node="" style="flex:none;display:grid;place-items:center;width:64px;height:64px;border-radius:16px;background:var(--bg-elev);border:1px solid var(--line-2);font-family:'JetBrains Mono';font-weight:600;font-size:17px;color:var(--accent);z-index:2;box-shadow:0 0 0 6px var(--bg);transition:background .35s,color .35s,border-color .35s,box-shadow .35s">02</span>
+          <div style="flex:1;border:1px solid var(--line);border-radius:16px;background:var(--bg-elev);padding:18px 22px;display:flex;gap:18px;align-items:center;justify-content:space-between">
+            <div style="min-width:0">
+              <span style="display:inline-flex;align-items:center;gap:7px;font-family:'JetBrains Mono';font-size:10.5px;letter-spacing:.04em;color:var(--accent);border:1px solid var(--line-2);border-radius:6px;padding:3px 8px"><span style="width:6px;height:6px;border-radius:50%;background:var(--accent)"></span>PBKDF2 → AES KEY</span>
+              <div style="font-family:'Space Grotesk';font-weight:600;font-size:19px;margin:9px 0 0">PBKDF2 derives your encryption key</div>
+              <p style="font-size:15px;color:var(--fg-dim);line-height:1.55;margin:6px 0 0;max-width:600px">100,000 iterations of HMAC-SHA-256 with a 16-byte random salt turn your password into a 256-bit AES-GCM key.</p>
+            </div>
+            <div style="flex:none;display:grid;place-items:center;width:58px;height:58px;border-radius:14px;background:var(--bg-elev2);border:1px solid var(--line)"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="transform-origin:8px 16px;animation:pg-turn 3.2s ease-in-out infinite"><circle cx="8" cy="16" r="4"></circle><path d="M11 13l9-9M17 4l3 3M15 6l3 3"></path></svg></div>
+          </div>
+        </div>
+
+        <div data-reveal="" data-flow-row="" style="display:flex;gap:22px;align-items:stretch;position:relative">
+          <span data-flow-node="" style="flex:none;display:grid;place-items:center;width:64px;height:64px;border-radius:16px;background:var(--bg-elev);border:1px solid var(--line-2);font-family:'JetBrains Mono';font-weight:600;font-size:17px;color:var(--accent);z-index:2;box-shadow:0 0 0 6px var(--bg);transition:background .35s,color .35s,border-color .35s,box-shadow .35s">03</span>
+          <div style="flex:1;border:1px solid var(--line);border-radius:16px;background:var(--bg-elev);padding:18px 22px;display:flex;gap:18px;align-items:center;justify-content:space-between">
+            <div style="min-width:0">
+              <span style="display:inline-flex;align-items:center;gap:7px;font-family:'JetBrains Mono';font-size:10.5px;letter-spacing:.04em;color:var(--accent);border:1px solid var(--line-2);border-radius:6px;padding:3px 8px"><span style="width:6px;height:6px;border-radius:50%;background:var(--accent)"></span>CIPHERTEXT</span>
+              <div style="font-family:'Space Grotesk';font-weight:600;font-size:19px;margin:9px 0 0">The vault is encrypted before it leaves</div>
+              <p style="font-size:15px;color:var(--fg-dim);line-height:1.55;margin:6px 0 0;max-width:600px">Credentials and your RSA private key are encrypted client-side, so what reaches our database is already ciphertext.</p>
+            </div>
+            <div style="flex:none;display:grid;place-items:center;width:58px;height:58px;border-radius:14px;background:var(--bg-elev2);border:1px solid var(--line);overflow:hidden;position:relative"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="animation:pg-pulse 2.8s ease-in-out infinite"><rect x="4" y="10" width="16" height="11" rx="2.5"></rect><path d="M8 10V6a4 4 0 0 1 8 0v4"></path></svg></div>
+          </div>
+        </div>
+
+        <div data-reveal="" data-flow-row="" style="display:flex;gap:22px;align-items:stretch;position:relative">
+          <span data-flow-node="" style="flex:none;display:grid;place-items:center;width:64px;height:64px;border-radius:16px;background:var(--bg-elev);border:1px solid var(--line-2);font-family:'JetBrains Mono';font-weight:600;font-size:17px;color:var(--accent);z-index:2;box-shadow:0 0 0 6px var(--bg);transition:background .35s,color .35s,border-color .35s,box-shadow .35s">04</span>
+          <div style="flex:1;border:1px solid var(--line);border-radius:16px;background:var(--bg-elev);padding:18px 22px;display:flex;gap:18px;align-items:center;justify-content:space-between">
+            <div style="min-width:0">
+              <span style="display:inline-flex;align-items:center;gap:7px;font-family:'JetBrains Mono';font-size:10.5px;letter-spacing:.04em;color:var(--accent-2);border:1px solid var(--line-2);border-radius:6px;padding:3px 8px"><span style="width:6px;height:6px;border-radius:50%;background:var(--accent-2)"></span>RSA KEY PAIR</span>
+              <div style="font-family:'Space Grotesk';font-weight:600;font-size:19px;margin:9px 0 0">RSA key pairs power secure sharing</div>
+              <p style="font-size:15px;color:var(--fg-dim);line-height:1.55;margin:6px 0 0;max-width:600px">A 2048-bit RSA-OAEP pair, generated with window.crypto.subtle, lets others receive access without decrypting your vault.</p>
+            </div>
+            <div style="flex:none;display:grid;place-items:center;width:58px;height:58px;border-radius:14px;background:var(--bg-elev2);border:1px solid var(--line);position:relative"><span style="position:absolute;width:34px;height:34px;border:1px solid var(--accent-2);border-radius:50%;opacity:.5;animation:pg-ring2 3s ease-in-out infinite"></span><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--accent-2)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="9" r="3"></circle><path d="M9.5 11.5 14 16"></path><circle cx="17" cy="15" r="3"></circle><path d="M14.5 12.5 10 8"></path></svg></div>
+          </div>
+        </div>
+
+        <div data-reveal="" data-flow-row="" style="display:flex;gap:22px;align-items:stretch;position:relative">
+          <span data-flow-node="" style="flex:none;display:grid;place-items:center;width:64px;height:64px;border-radius:16px;background:var(--bg-elev);border:1px solid var(--line-2);font-family:'JetBrains Mono';font-weight:600;font-size:17px;color:var(--accent);z-index:2;box-shadow:0 0 0 6px var(--bg);transition:background .35s,color .35s,border-color .35s,box-shadow .35s">05</span>
+          <div style="flex:1;border:1px solid var(--line);border-radius:16px;background:var(--bg-elev);padding:18px 22px;display:flex;gap:18px;align-items:center;justify-content:space-between">
+            <div style="min-width:0">
+              <span style="display:inline-flex;align-items:center;gap:7px;font-family:'JetBrains Mono';font-size:10.5px;letter-spacing:.04em;color:var(--accent-2);border:1px solid var(--line-2);border-radius:6px;padding:3px 8px"><span style="width:6px;height:6px;border-radius:50%;background:var(--accent-2)"></span>SEALED ENVELOPE</span>
+              <div style="font-family:'Space Grotesk';font-weight:600;font-size:19px;margin:9px 0 0">Access travels as an encrypted envelope</div>
+              <p style="font-size:15px;color:var(--fg-dim);line-height:1.55;margin:6px 0 0;max-width:600px">A shared secret is sealed to the recipient’s public key — only their private key can open it, and the plaintext is never exposed.</p>
+            </div>
+            <div style="flex:none;display:grid;place-items:center;width:58px;height:58px;border-radius:14px;background:var(--bg-elev2);border:1px solid var(--line)"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--accent-2)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="animation:pg-float 4s ease-in-out infinite"><rect x="3" y="6" width="18" height="13" rx="2.5"></rect><path d="M3.5 7 12 13l8.5-6"></path><circle cx="12" cy="13.5" r="2" fill="var(--accent-2)" stroke="none"></circle></svg></div>
+          </div>
+        </div>
+
+        <div data-reveal="" data-flow-row="" style="display:flex;gap:22px;align-items:stretch;position:relative">
+          <span data-flow-node="" style="flex:none;display:grid;place-items:center;width:64px;height:64px;border-radius:16px;background:var(--bg-elev);border:1px solid var(--line-2);font-family:'JetBrains Mono';font-weight:600;font-size:17px;color:var(--accent);z-index:2;box-shadow:0 0 0 6px var(--bg);transition:background .35s,color .35s,border-color .35s,box-shadow .35s">06</span>
+          <div style="flex:1;border:1px solid var(--line-2);border-radius:16px;background:linear-gradient(120deg,color-mix(in srgb,var(--accent) 8%,var(--bg-elev)),var(--bg-elev));padding:18px 22px;display:flex;gap:18px;align-items:center;justify-content:space-between">
+            <div style="min-width:0">
+              <span style="display:inline-flex;align-items:center;gap:7px;font-family:'JetBrains Mono';font-size:10.5px;letter-spacing:.04em;color:var(--accent);border:1px solid var(--accent);border-radius:6px;padding:3px 8px"><span style="width:6px;height:6px;border-radius:50%;background:var(--accent);animation:pg-blink 1.4s ease-in-out infinite"></span>AUTOFILL · FROZEN</span>
+              <div style="font-family:'Space Grotesk';font-weight:600;font-size:19px;margin:9px 0 0">The extension fills, submits and freezes</div>
+              <p style="font-size:15px;color:var(--fg-dim);line-height:1.55;margin:6px 0 0;max-width:600px">On the recipient’s side, the extension autofills, auto-submits and freezes the window and controls so nothing can leak.</p>
+            </div>
+            <div style="flex:none;display:grid;place-items:center;width:58px;height:58px;border-radius:14px;background:var(--accent);position:relative;overflow:hidden"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--accent-ink)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg><span style="position:absolute;left:-6px;right:-6px;height:2px;background:rgba(255,255,255,.7);animation:pg-scan 2.4s ease-in-out infinite"></span></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- SCROLL ZOOM -->
+  <section ref="{{ setZoom }}" style="position:relative;z-index:1;height:100vh;overflow:hidden;background:#05060a">
+    <img class="pg-zoom-img" src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&amp;fit=crop&amp;w=1920&amp;q=80" alt="Abstract encrypted data stream" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform-origin:center center;will-change:transform">
+    <div style="position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(5,6,10,.5),rgba(5,6,10,.78))"></div>
+    <div class="pg-zoom-veil" style="position:absolute;inset:0;z-index:2;background:radial-gradient(circle at 50% 50%,transparent 22%,#05060a 82%);opacity:.18;pointer-events:none"></div>
+    <div class="pg-zoom-text" style="position:absolute;inset:0;z-index:3;display:grid;place-items:center;text-align:center;padding:0 24px;pointer-events:none;will-change:transform,opacity">
+      <div style="max-width:780px">
+        <span style="font-family:'JetBrains Mono';font-size:12px;letter-spacing:.08em;color:var(--accent);text-transform:uppercase">Zero-knowledge · what the server sees</span>
+        <h2 style="font-family:'Space Grotesk';font-weight:700;font-size:clamp(34px,6vw,72px);line-height:1.02;letter-spacing:-.035em;color:#f5f3ec;margin:18px 0 0;text-wrap:balance">Zoom in all you want.<br>It’s still just ciphertext.</h2>
+        <p style="font-size:clamp(16px,1.7vw,19px);line-height:1.6;color:#b7bac2;margin:20px auto 0;max-width:540px">Even magnified, a stolen record is meaningless without your master password. This is exactly what our database holds.</p>
+        <span style="display:inline-block;margin:30px 0 0;font-family:'JetBrains Mono';font-size:12px;color:#6c7079">keep scrolling ↓</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- FINAL CTA -->
+  <section data-reveal="" style="position:relative;z-index:1;max-width:1240px;margin:clamp(70px,10vw,130px) auto 0;padding:0 28px">
+    <div style="border:1px solid var(--line-2);border-radius:26px;background:linear-gradient(160deg,var(--bg-elev),var(--bg));padding:clamp(40px,7vw,80px) 28px;text-align:center;position:relative;overflow:hidden">
+      <div style="position:absolute;inset:0;background:radial-gradient(600px 320px at 50% 120%,var(--glow),transparent 60%);pointer-events:none"></div>
+      <div style="position:relative">
+        <h2 style="font-family:'Space Grotesk';font-weight:700;font-size:clamp(30px,5vw,56px);letter-spacing:-.035em;line-height:1.04;margin:0;text-wrap:balance">Take control of every<br>credential you own.</h2>
+        <p style="max-width:520px;margin:20px auto 0;font-size:17px;color:var(--fg-dim);line-height:1.6">Set up your vault in minutes. Share the access, never the secret.</p>
+        <a href="/login" style="display:inline-flex;align-items:center;gap:10px;margin:32px 0 0;padding:16px 30px;border-radius:13px;background:var(--accent);color:var(--accent-ink);font-weight:600;font-size:17px;box-shadow:0 0 36px var(--glow);transition:transform .2s,box-shadow .2s" style-hover="transform:translateY(-2px);box-shadow:0 10px 46px var(--glow)">Get Started
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer style="position:relative;z-index:1;margin:clamp(60px,9vw,120px) 0 0;border-top:1px solid var(--line);overflow:hidden">
+    <div style="max-width:1240px;margin:0 auto;padding:0 28px">
+      <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:24px;padding:clamp(36px,5vw,56px) 0;border-bottom:1px solid var(--line)">
+        <div style="position:relative">
+          <span style="position:absolute;top:-10px;left:-6px;width:16px;height:16px;border-top:2px solid var(--fg-faint);border-left:2px solid var(--fg-faint)"></span>
+          <h2 style="font-family:'Space Grotesk';font-weight:700;font-size:clamp(28px,4vw,42px);letter-spacing:-.03em;line-height:1.05;margin:0">Get started<br>with PassGuard <span style="color:var(--fg-faint);font-weight:400">⌋</span></h2>
+        </div>
+        <a href="/login" style="display:inline-flex;align-items:center;gap:9px;padding:14px 26px;border-radius:100px;background:var(--accent);color:var(--accent-ink);font-weight:600;font-size:15.5px;box-shadow:0 0 26px var(--glow);transition:transform .2s,box-shadow .2s" style-hover="transform:translateY(-2px);box-shadow:0 8px 36px var(--glow)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>Get Started</a>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:28px 24px;padding:clamp(32px,4vw,48px) 0 0">
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <span style="font-family:'JetBrains Mono';font-size:12px;letter-spacing:.03em;color:var(--fg-faint)">Product</span>
+          <a href="#features" style="font-size:14.5px;color:var(--fg-dim);transition:color .2s" style-hover="color:var(--fg)">Features</a>
+          <a href="#security" style="font-size:14.5px;color:var(--fg-dim);transition:color .2s" style-hover="color:var(--fg)">Security</a>
+          <a href="#how" style="font-size:14.5px;color:var(--fg-dim);transition:color .2s" style-hover="color:var(--fg)">How it works</a>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <span style="font-family:'JetBrains Mono';font-size:12px;letter-spacing:.03em;color:var(--fg-faint)">Legal</span>
+          <a href="#" style="font-size:14.5px;color:var(--fg-dim);transition:color .2s" style-hover="color:var(--fg)">Terms &amp; conditions</a>
+          <a href="#" style="font-size:14.5px;color:var(--fg-dim);transition:color .2s" style-hover="color:var(--fg)">Privacy policy</a>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <span style="font-family:'JetBrains Mono';font-size:12px;letter-spacing:.03em;color:var(--fg-faint)">Company</span>
+          <a href="#" style="font-size:14.5px;color:var(--fg-dim);transition:color .2s" style-hover="color:var(--fg)">About</a>
+          <a href="#compare" style="font-size:14.5px;color:var(--fg-dim);transition:color .2s" style-hover="color:var(--fg)">Why PassGuard</a>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <span style="font-family:'JetBrains Mono';font-size:12px;letter-spacing:.03em;color:var(--fg-faint)">Contact</span>
+          <a href="/login" style="font-size:14.5px;color:var(--fg-dim);transition:color .2s" style-hover="color:var(--fg)">Get a demo</a>
+          <a href="#" style="font-size:14.5px;color:var(--fg-dim);transition:color .2s" style-hover="color:var(--fg)">Email</a>
+          <a href="#" style="font-size:14.5px;color:var(--fg-dim);transition:color .2s" style-hover="color:var(--fg)">LinkedIn</a>
+          <a href="#" style="font-size:14.5px;color:var(--fg-dim);transition:color .2s" style-hover="color:var(--fg)">X / Twitter</a>
+        </div>
+      </div>
+    </div>
+
+    <div style="position:relative;line-height:0;margin:clamp(8px,2vw,20px) 0 -2vw;pointer-events:none;user-select:none" aria-hidden="true">
+      <div style="font-family: 'Space Grotesk'; font-weight: 700; font-size: min(42vw,560px); letter-spacing: -.04em; color: color-mix(in srgb,var(--fg) 6%,transparent); text-align: center; line-height: .78; width: 1064px; height: 364px">Pass</div>
+    </div>
+
+    <div style="border-top:1px solid var(--line)">
+      <div style="max-width:1240px;margin:0 auto;padding:22px 28px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:14px 30px;font-family:'JetBrains Mono';font-size:12px;color:var(--fg-faint)">
+        <span>© 2026 PassGuard · Zero-knowledge by design</span>
+        <div style="display:flex;gap:26px">
+          <a href="#" style="color:var(--fg-faint);transition:color .2s" style-hover="color:var(--fg)">Privacy Policy</a>
+          <a href="#" style="color:var(--fg-faint);transition:color .2s" style-hover="color:var(--fg)">Terms of Use</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:900}}">
+class Component extends DCLogic {
+  state = { theme: 'dark' };
+
+  themes = {
+    dark: {
+      '--bg':'#08090c','--bg-elev':'#0f1116','--bg-elev2':'#161922',
+      '--fg':'#f3f1ea','--fg-dim':'#a6a9b2','--fg-faint':'#676b76',
+      '--line':'rgba(255,255,255,.09)','--line-2':'rgba(255,255,255,.15)',
+      '--accent':'#c4ff44','--accent-2':'#8b7bff','--accent-ink':'#0a0b0e',
+      '--glow':'rgba(196,255,68,.22)','color-scheme':'dark'
+    },
+    light: {
+      '--bg':'#f4f2ea','--bg-elev':'#ffffff','--bg-elev2':'#efece2',
+      '--fg':'#15161a','--fg-dim':'#55585f','--fg-faint':'#8b8e95',
+      '--line':'rgba(0,0,0,.10)','--line-2':'rgba(0,0,0,.16)',
+      '--accent':'#1f9d4d','--accent-2':'#6b57e6','--accent-ink':'#ffffff',
+      '--glow':'rgba(31,157,77,.16)','color-scheme':'light'
+    }
+  };
+
+  sun = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5 19 19M19 5l-1.5 1.5M6.5 17.5 5 19"/></svg>';
+  moon = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.5 6.5 0 0 0 9.8 9.8Z"/></svg>';
+
+  componentDidMount() {
+    let saved = 'dark';
+    try { saved = localStorage.getItem('pg-theme') || 'dark'; } catch (e) {}
+    this.setState({ theme: saved });
+    this.applyTheme(saved);
+    this.setupReveal();
+    this.setupScroll();
+    this.setupParallax();
+    this.setupParallaxScroll();
+    this.setupFlow();
+    this.setupZoom();
+  }
+
+  setupZoom() {
+    let tries = 0;
+    const go = () => {
+      const wrap = this.zoomEl;
+      if (window.gsap && window.ScrollTrigger && wrap) {
+        const gsap = window.gsap;
+        gsap.registerPlugin(window.ScrollTrigger);
+        const q = (s) => wrap.querySelector(s);
+        gsap.timeline({
+          scrollTrigger: { trigger: wrap, start: 'top top', end: '+=150%', pin: true, scrub: true }
+        })
+        .to(q('.pg-zoom-img'), { scale: 2.5, ease: 'power1.inOut' }, 0)
+        .to(q('.pg-zoom-veil'), { opacity: 0.85, ease: 'power1.in' }, 0)
+        .to(q('.pg-zoom-text'), { opacity: 0, y: -60, ease: 'power1.in' }, 0);
+        window.ScrollTrigger.refresh();
+      } else if (tries++ < 80) {
+        setTimeout(go, 100);
+      }
+    };
+    go();
+  }
+
+  setupFlow() {
+    const wrap = this.flowEl, fill = this.flowFill;
+    if (!wrap || !fill) return;
+    const nodes = Array.from(wrap.querySelectorAll('[data-flow-node]'));
+    let ticking = false;
+    const upd = () => {
+      const r = wrap.getBoundingClientRect();
+      const vh = window.innerHeight || 800;
+      const track = Math.max(1, r.height - 64);
+      let p = (vh * 0.62 - r.top) / track;
+      p = Math.max(0, Math.min(1, p));
+      fill.style.height = (p * track) + 'px';
+      const fillBottom = r.top + p * track;
+      nodes.forEach(n => {
+        const nr = n.getBoundingClientRect();
+        const active = (nr.top + nr.height / 2) <= fillBottom + 4;
+        if (active) {
+          n.style.background = 'var(--accent)';
+          n.style.color = 'var(--accent-ink)';
+          n.style.borderColor = 'var(--accent)';
+          n.style.boxShadow = '0 0 0 6px var(--bg), 0 0 24px var(--glow)';
+        } else {
+          n.style.background = 'var(--bg-elev)';
+          n.style.color = 'var(--accent)';
+          n.style.borderColor = 'var(--line-2)';
+          n.style.boxShadow = '0 0 0 6px var(--bg)';
+        }
+      });
+      ticking = false;
+    };
+    const onScroll = () => { if (!ticking) { ticking = true; requestAnimationFrame(upd); } };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    upd();
+  }
+
+  applyTheme(t) {
+    const root = this.rootEl; if (!root) return;
+    const vars = this.themes[t] || this.themes.dark;
+    for (const k in vars) root.style.setProperty(k, vars[k]);
+  }
+
+  toggle = () => {
+    const t = this.state.theme === 'dark' ? 'light' : 'dark';
+    this.setState({ theme: t });
+    try { localStorage.setItem('pg-theme', t); } catch (e) {}
+    this.applyTheme(t);
+  };
+
+  setupReveal() {
+    const root = this.rootEl; if (!root) return;
+    const els = Array.from(root.querySelectorAll('[data-reveal]'));
+    els.forEach((el) => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(30px)';
+      el.style.transition = 'opacity .8s cubic-bezier(.2,.7,.2,1), transform .8s cubic-bezier(.2,.7,.2,1)';
+    });
+    if (!('IntersectionObserver' in window)) {
+      els.forEach(el => { el.style.opacity = '1'; el.style.transform = 'none'; });
+      return;
+    }
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          const sibs = Array.from(e.target.parentNode.querySelectorAll(':scope > [data-reveal]'));
+          const idx = Math.max(0, sibs.indexOf(e.target));
+          e.target.style.transitionDelay = (idx * 70) + 'ms';
+          e.target.style.opacity = '1';
+          e.target.style.transform = 'none';
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+    els.forEach(el => io.observe(el));
+  }
+
+  setupScroll() {
+    const bar = this.progEl;
+    const onScroll = () => {
+      const h = document.documentElement;
+      const max = (h.scrollHeight - h.clientHeight) || 1;
+      const p = Math.min(100, Math.max(0, (h.scrollTop || window.scrollY) / max * 100));
+      if (bar) bar.style.width = p + '%';
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  }
+
+  setupParallaxScroll() {
+    const root = this.rootEl; if (!root) return;
+    const els = Array.from(root.querySelectorAll('[data-parallax]'));
+    if (!els.length) return;
+    let ticking = false;
+    const apply = () => {
+      const vh = window.innerHeight || 800;
+      els.forEach(el => {
+        const speed = parseFloat(el.getAttribute('data-parallax')) || 0;
+        const r = el.getBoundingClientRect();
+        const center = r.top + r.height / 2;
+        const off = center - vh / 2;
+        el.style.transform = 'translate3d(0,' + (-off * speed).toFixed(1) + 'px,0)';
+      });
+      ticking = false;
+    };
+    const onScroll = () => { if (!ticking) { ticking = true; requestAnimationFrame(apply); } };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    apply();
+  }
+
+  setupParallax() {
+    const scene = this.sceneEl, root = this.rootEl; if (!scene || !root) return;
+    const onMove = (ev) => {
+      const r = root.getBoundingClientRect();
+      const x = (ev.clientX - r.left) / r.width - 0.5;
+      const y = (ev.clientY - r.top) / Math.max(1, window.innerHeight) - 0.3;
+      scene.style.setProperty('--ry', (-20 + x * 26).toFixed(1) + 'deg');
+      scene.style.setProperty('--rx', (-12 - y * 18).toFixed(1) + 'deg');
+    };
+    window.addEventListener('mousemove', onMove, { passive: true });
+  }
+
+  renderVals() {
+    return {
+      setRoot: (el) => { this.rootEl = el; },
+      setScene: (el) => { this.sceneEl = el; },
+      setProg: (el) => { this.progEl = el; },
+      setFlow: (el) => { this.flowEl = el; },
+      setFlowFill: (el) => { this.flowFill = el; },
+      setZoom: (el) => { this.zoomEl = el; },
+      cmp: [
+        { f: 'Zero-knowledge storage model', one: true, bit: true },
+        { f: 'Browser DOM window-freeze auto-fill', one: false, bit: false },
+        { f: 'Password sharing without plaintext exposure', one: false, bit: false },
+        { f: 'DevTools / inspect-element blocking on fill', one: false, bit: false },
+        { f: 'Client RSA-OAEP 2048 asymmetric envelopes', one: true, bit: true },
+        { f: 'PBKDF2 100,000-iteration client derivation', one: true, bit: true },
+        { f: 'Server AES-256-CBC with per-row IV', one: true, bit: true },
+        { f: 'Integrated WebExtension isolation sandbox', one: false, bit: false }
+      ].map(r => ({ ...r, oneN: !r.one, bitN: !r.bit })),
+      toggle: this.toggle,
+      isDark: this.state.theme === 'dark',
+      isLight: this.state.theme !== 'dark',
+      standards: [
+        { tag: 'AES-256-GCM', d: 'Vault encryption' },
+        { tag: 'RSA-OAEP 2048', d: 'Key exchange' },
+        { tag: 'PBKDF2 · 100K', d: 'Key derivation' },
+        { tag: 'bcryptjs', d: 'Login hashing' },
+        { tag: 'MFA', d: 'Account access' }
+      ],
+      steps: [
+        { n: '01', t: 'Your master password stays on your device', d: 'It is never transmitted. Everything sensitive is unlocked locally, in your browser — the server never sees it.' },
+        { n: '02', t: 'PBKDF2 derives your encryption key', d: '100,000 iterations of HMAC-SHA-256 with a 16-byte random salt turn your password into a 256-bit AES-GCM key.' },
+        { n: '03', t: 'The vault is encrypted before it leaves', d: 'Credentials and your RSA private key are encrypted client-side, so what reaches our database is already ciphertext.' },
+        { n: '04', t: 'RSA key pairs power secure sharing', d: 'A 2048-bit RSA-OAEP pair, generated with window.crypto.subtle, lets others receive access without decrypting your vault.' },
+        { n: '05', t: 'Access travels as an encrypted envelope', d: 'A shared secret is sealed to the recipient\u2019s public key — only their private key can open it, and the plaintext is never exposed.' },
+        { n: '06', t: 'The extension fills, submits and freezes', d: 'On the recipient\u2019s side, the extension autofills, auto-submits and freezes the window and controls so nothing can leak.' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

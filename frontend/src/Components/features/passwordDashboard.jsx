@@ -25,6 +25,13 @@ function PasswordDashboard() {
 	const API_URL = '/api/passwords'
 	const { isLocked } = useShare()
 
+	// ApexCharts doesn't inherit our CSS variables, so its default label/legend
+	// colors were invisible against the dark panel background. Pick explicit,
+	// theme-aware colors instead.
+	const isLightMode = typeof document !== 'undefined' && document.body.classList.contains('light-mode')
+	const chartTextColor = isLightMode ? '#1f2937' : '#f1f5f9'
+	const chartMutedColor = isLightMode ? '#64748b' : '#94a3b8'
+
 	useEffect(() => {
 		console.log(`[PasswordDashboard] Refreshing. Locked: ${isLocked}`);
 
@@ -124,18 +131,27 @@ function PasswordDashboard() {
 
 	// Chart Options
 	const strengthDonutOptions = {
+		theme: { mode: isLightMode ? 'light' : 'dark' },
 		labels: ['Strong', 'Medium', 'Weak'],
 		colors: ['#22c55e', '#f59e0b', '#ff0000d5'],
-		legend: { position: 'right', fontSize: '14px', markers: { radius: 12 } },
+		legend: {
+			position: 'right',
+			fontSize: '14px',
+			markers: { radius: 12 },
+			labels: { colors: chartTextColor }
+		},
 		plotOptions: {
 			pie: {
 				donut: {
 					size: '70%',
 					labels: {
 						show: true,
+						name: { color: chartMutedColor },
+						value: { color: chartTextColor },
 						total: {
 							show: true,
 							label: 'Total',
+							color: chartTextColor,
 							formatter: () => stats.total
 						}
 					}
@@ -147,6 +163,7 @@ function PasswordDashboard() {
 	}
 
 	const lengthBarOptions = {
+		theme: { mode: isLightMode ? 'light' : 'dark' },
 		chart: { toolbar: { show: false } },
 		colors: ['#5d6df8'],
 		plotOptions: {
@@ -158,21 +175,22 @@ function PasswordDashboard() {
 		},
 		xaxis: {
 			categories: ['< 6', '6-8', '9-12', '13-16', '17+'],
-			labels: { style: { colors: '#94a3b8' } }
+			labels: { style: { colors: chartMutedColor } }
 		},
 		yaxis: { show: false },
 		grid: { show: false },
 		dataLabels: {
 			enabled: true,
 			offsetY: -20,
-			style: { fontSize: '12px', colors: ['#475569'] }
+			style: { fontSize: '12px', colors: [chartTextColor] }
 		}
 	}
 
 	const typeDonutOptions = {
+		theme: { mode: isLightMode ? 'light' : 'dark' },
 		labels: ['Unique', 'Reused'],
 		colors: ['#1025e0d5', '#6366f1'],
-		legend: { position: 'right' },
+		legend: { position: 'right', labels: { colors: chartTextColor } },
 		stroke: { show: false },
 		dataLabels: { enabled: false },
 		plotOptions: {
@@ -181,9 +199,12 @@ function PasswordDashboard() {
 					size: '75%',
 					labels: {
 						show: true,
+						name: { color: chartMutedColor },
+						value: { color: chartTextColor },
 						total: {
 							show: true,
 							label: 'Total',
+							color: chartTextColor,
 							formatter: () => stats.total
 						}
 					}

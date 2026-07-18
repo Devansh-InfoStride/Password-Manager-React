@@ -1,4 +1,3 @@
-import { useEffect } from 'react'
 import { Link, Navigate, Outlet, Route, Routes } from 'react-router-dom'
 import Header from './Components/header'
 import Footer from './Components/footer'
@@ -7,9 +6,20 @@ import PasswordGenerator from './Components/features/passwordGenerator'
 import PasswordManager from './Components/features/passwordManager'
 import PasswordDashboard from './Components/features/passwordDashboard'
 import UserProfile from './Components/features/userProfile'
+import Login from './Components/auth/Login'
+import Signup from './Components/auth/Signup'
 import './App.css'
 
 
+
+// Guards the main app routes: sends anyone without a token to /login.
+function RequireAuth() {
+	const token = localStorage.getItem('token')
+	if (!token) {
+		return <Navigate to="/login" replace />
+	}
+	return <Outlet />
+}
 
 function Layout() {
 	return (
@@ -41,7 +51,6 @@ function HomePage() {
 					<div className="bento-action">
 						<span className="button-link">View Dashboard</span>
 					</div>
-					<div className="bento-decoration glow-orb"></div>
 				</Link>
 
 				<Link to="/checker" className="bento-item bento-medium">
@@ -73,41 +82,19 @@ function HomePage() {
 }
 
 function App() {
-  useEffect(() => {
-		// If the Password Manager was opened with a `token` query param (handed off
-		// from the Login app on a different dev port), save it into this origin's
-		// localStorage and remove the param from the URL.
-		try {
-			const params = new URLSearchParams(window.location.search);
-			const tokenFromUrl = params.get('token');
-			if (tokenFromUrl) {
-				localStorage.setItem('token', tokenFromUrl);
-				params.delete('token');
-				const newSearch = params.toString();
-				const newUrl = window.location.pathname + (newSearch ? `?${newSearch}` : '') + window.location.hash;
-				window.history.replaceState(null, '', newUrl);
-			}
-		} catch (e) {
-			// ignore malformed URL
-		}
-
-		const token = localStorage.getItem('token');
-		if (!token) {
-			// Redirect to the Login application if no token is found
-			const loginUrl = import.meta.env.VITE_LOGIN_URL || 'http://localhost:5174/login';
-			window.location.href = loginUrl;
-		}
-  }, []);
-
   return (
 		<Routes>
-			<Route element={<Layout />}>
-				<Route index element={<HomePage />} />
-				<Route path="dashboard" element={<PasswordDashboard />} />
-				<Route path="checker" element={<PasswordStrengthChecker />} />
-				<Route path="generator" element={<PasswordGenerator />} />
-				<Route path="manage" element={<PasswordManager />} />
-				<Route path="profile" element={<UserProfile />} />
+			<Route path="login" element={<Login />} />
+			<Route path="signup" element={<Signup />} />
+			<Route element={<RequireAuth />}>
+				<Route element={<Layout />}>
+					<Route index element={<HomePage />} />
+					<Route path="dashboard" element={<PasswordDashboard />} />
+					<Route path="checker" element={<PasswordStrengthChecker />} />
+					<Route path="generator" element={<PasswordGenerator />} />
+					<Route path="manage" element={<PasswordManager />} />
+					<Route path="profile" element={<UserProfile />} />
+				</Route>
 			</Route>
 			<Route path="*" element={<Navigate to="/" replace />} />
 		</Routes>

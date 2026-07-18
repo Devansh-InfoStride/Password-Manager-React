@@ -6,25 +6,34 @@ A secure, responsive, and modern Password Manager application built with a React
 
 ## 📂 Directory Structure
 
-The project has been restructured to separate the **Frontend** and **Backend** code. This architecture makes local development, testing, and cloud deployment straightforward.
+The project is organized into 5 top-level folders, each with a single, clear purpose:
 
 ```
 Password-Manager-React/
-├── frontend/             # React application (Vite, TailwindCSS/Vanilla CSS)
-│   ├── src/              # React components, styles, utilities, and assets
-│   ├── package.json      # Frontend package details & scripts
-│   └── vercel.json       # Frontend deployment configuration for Vercel
+├── Frontend/             # React application (Vite) - login, signup, and the PassGuard vault UI
+│   ├── src/
+│   │   ├── Components/
+│   │   │   ├── auth/     # Login.jsx, Signup.jsx (routed at /login, /signup)
+│   │   │   └── features/ # Dashboard, generator, strength checker, vault, profile
+│   │   ├── styles/, utils/, context/, assets/
+│   │   ├── package.json
+│   │   └── vercel.json
 │
-├── backend/              # Node.js + Express API server
-│   ├── index.js          # Main application entry point
-│   ├── utils/            # Helper modules (database connections, mail configurations)
-│   ├── uploads/          # Temporary file/image upload directory
-│   └── package.json      # Backend package details & scripts
+├── Backend/              # Node.js + Express API server (auth, passwords, sharing, profile)
+│   ├── index.js
+│   ├── utils/
+│   └── package.json
 │
-├── Extension/            # Password Manager Browser Extension
-├── Login/                # Custom Login modules or templates
-└── README.md             # This instruction manual
+├── Web-Extension/        # Password Manager Browser Extension
+├── Landing-Page/         # Marketing / landing page
+└── Rest/                 # Everything else not belonging to the 4 folders above
+    ├── check_raw_data.js
+    ├── skills-lock.json
+    ├── .agents/
+    └── .impeccable/
 ```
+
+Login and signup used to live in a separate `Login/` app deployed on its own domain, handing off a token via a URL query param. They've been merged into `Frontend/` as routes (`/login`, `/signup`) inside the same single-page app, guarded by a `RequireAuth` wrapper so only an authenticated session can reach the vault routes.
 
 ---
 
@@ -38,13 +47,13 @@ Password-Manager-React/
 
 1. Navigate to the backend directory:
    ```bash
-   cd backend
+   cd Backend
    ```
 2. Install dependencies:
    ```bash
    npm install
    ```
-3. Set up environment variables. Create a `.env` file in the `backend/` directory using `.env.example` as a template:
+3. Set up environment variables. Create a `.env` file in the `Backend/` directory using `.env.example` as a template:
    ```env
    PORT=5000
    MONGO_URI=your_mongodb_connection_string
@@ -65,36 +74,37 @@ Password-Manager-React/
 
 1. Navigate to the frontend directory:
    ```bash
-   cd ../frontend
+   cd ../Frontend
    ```
 2. Install dependencies:
    ```bash
    npm install
    ```
-3. Set up environment variables. Create a `.env` file in the `frontend/` directory (refer to `.env.example`):
+3. Set up environment variables. Create a `.env` file in the `Frontend/` directory (refer to `.env.example`):
    ```env
    VITE_API_URL=http://localhost:5000/
-   VITE_LOGIN_URL=http://localhost:5173/login
    ```
 4. Start the frontend development server:
    ```bash
    npm run dev
    ```
-   Open your browser to `http://localhost:5173`.
+   Open your browser to `http://localhost:5173`. If you don't have a token yet, you'll be redirected to `/login`, with a link through to `/signup`.
 
 ---
 
 ## 🚀 Deployment Instructions
 
 ### Frontend (e.g., Vercel)
-The frontend contains a `vercel.json` file. 
+The `Frontend/` folder contains a `vercel.json` file (SPA rewrite to `index.html`, needed so `/login`, `/signup`, etc. work on refresh).
 To deploy using Vercel:
 1. Install the Vercel CLI: `npm i -g vercel`
-2. Run `vercel` in the `frontend` folder and follow the prompts.
+2. Run `vercel` in the `Frontend` folder and follow the prompts.
 3. Configure the `VITE_API_URL` environment variable in the Vercel dashboard to point to your deployed backend URL.
+
+This replaces the previous two-Vercel-project setup (one for the vault app, one for Login) — there is now a single deployment for `Frontend/`.
 
 ### Backend (e.g., Render, Railway, Heroku)
 To deploy the Express server:
-1. Select the `backend` folder as the root directory of your project on the deployment platform.
+1. Select the `Backend` folder as the root directory of your project on the deployment platform.
 2. Set the build command to `npm install` and the start command to `node index.js`.
 3. Add the required environment variables (e.g., `MONGO_URI`, `JWT_SECRET`, etc.) inside your deployment platform dashboard.

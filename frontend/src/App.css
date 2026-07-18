@@ -33,9 +33,6 @@
   font-weight: 800;
   font-size: 1.3rem;
   letter-spacing: -0.02em;
-  background: linear-gradient(135deg, var(--text) 30%, var(--text-secondary) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
   transition: opacity 0.25s ease;
 }
 
@@ -122,9 +119,6 @@
   font-weight: 800;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
   display: inline-block;
 }
 
@@ -136,9 +130,6 @@
   font-weight: 800;
   line-height: 1.15;
   letter-spacing: -0.03em;
-  background: linear-gradient(180deg, var(--text) 40%, var(--text-secondary) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
 }
 
 .hero-text,
@@ -169,6 +160,7 @@
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   transition: var(--transition);
+  min-width: 0;
 }
 
 .bento-item {
@@ -254,18 +246,6 @@
   align-self: flex-start;
   position: relative;
   z-index: 2;
-}
-
-.bento-decoration.glow-orb {
-  position: absolute;
-  bottom: -50px;
-  right: -50px;
-  width: 250px;
-  height: 250px;
-  background: radial-gradient(circle, var(--primary-glow) 0%, transparent 70%);
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 1;
 }
 
 /* 4. Inputs, Forms & Selection UI */
@@ -566,7 +546,7 @@ button:disabled {
 
 .password-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
   gap: 20px;
 }
 
@@ -577,6 +557,7 @@ button:disabled {
   flex-direction: column;
   gap: 16px;
   border-color: rgba(255, 255, 255, 0.05);
+  min-width: 0;
 }
 
 .password-item:hover {
@@ -597,17 +578,15 @@ button:disabled {
 
 .password-value {
   width: 100%;
+  min-width: 0;
   padding: 14px;
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
-  background: rgba(8, 11, 17, 0.6);
+  background: var(--input-bg);
   color: var(--text);
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   font-size: 1.05rem;
   font-weight: 500;
-  white-space: pre-wrap;
-  word-break: break-word;
-  overflow-x: auto;
 }
 
 .password-value-row {
@@ -615,11 +594,16 @@ button:disabled {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+  width: 100%;
+  min-width: 0;
 }
 
 .password-value-text {
-  flex: 1;
+  flex: 1 1 auto;
   min-width: 0;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: normal;
 }
 
 .password-item button {
@@ -676,6 +660,7 @@ button:disabled {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  min-width: 0;
 }
 
 .password-info .password-label {
@@ -697,6 +682,8 @@ button:disabled {
   display: flex;
   gap: 10px;
   align-items: center;
+  width: 100%;
+  min-width: 0;
 }
 
 .password-field .password-value {
@@ -823,10 +810,11 @@ button:disabled {
 
 .vault-layout {
   display: grid;
-  grid-template-columns: 380px 1fr;
+  grid-template-columns: min(380px, 100%) minmax(0, 1fr);
   gap: 28px;
   align-items: start;
   width: 100%;
+  min-width: 0;
 }
 
 .vault-layout .results-section {
@@ -835,7 +823,7 @@ button:disabled {
 
 @media (max-width: 768px) {
   .vault-layout {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: 24px;
   }
 }
