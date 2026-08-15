@@ -364,7 +364,7 @@ function PasswordManager() {
 
 						<div style={{ display: 'flex', gap: '12px', marginTop: '12px' }}>
 							<button type="submit" style={{ flex: 1 }}>{editingId ? 'Update Password' : 'Save Password'}</button>
-							{editingId && <button type="button" onClick={cancelEdit} style={{ background: 'rgba(255, 255, 255, 0.08)', color: 'var(--text-secondary)' }}>Cancel</button>}
+							{editingId && <button type="button" className="btn-secondary" onClick={cancelEdit}>Cancel</button>}
 						</div>
 					</form>
 					{message && <p className="success-message">{message}</p>}

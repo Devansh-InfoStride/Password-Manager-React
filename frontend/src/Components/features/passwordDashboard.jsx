@@ -133,7 +133,7 @@ function PasswordDashboard() {
 	const strengthDonutOptions = {
 		theme: { mode: isLightMode ? 'light' : 'dark' },
 		labels: ['Strong', 'Medium', 'Weak'],
-		colors: ['#22c55e', '#f59e0b', '#ff0000d5'],
+		colors: ['#3ecf8e', '#e0a53f', '#f0616d'],
 		legend: {
 			position: 'right',
 			fontSize: '14px',
@@ -165,7 +165,7 @@ function PasswordDashboard() {
 	const lengthBarOptions = {
 		theme: { mode: isLightMode ? 'light' : 'dark' },
 		chart: { toolbar: { show: false } },
-		colors: ['#5d6df8'],
+		colors: ['#5b7cfa'],
 		plotOptions: {
 			bar: {
 				borderRadius: 6,
@@ -189,7 +189,7 @@ function PasswordDashboard() {
 	const typeDonutOptions = {
 		theme: { mode: isLightMode ? 'light' : 'dark' },
 		labels: ['Unique', 'Reused'],
-		colors: ['#1025e0d5', '#6366f1'],
+		colors: ['#5b7cfa', '#e0a53f'],
 		legend: { position: 'right', labels: { colors: chartTextColor } },
 		stroke: { show: false },
 		dataLabels: { enabled: false },
