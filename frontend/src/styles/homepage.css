@@ -159,3 +159,69 @@
   text-align: center;
   color: var(--muted);
 }
+
+/* Brand mark above the auth card */
+.auth-brand {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  margin: 0 auto 20px;
+  border-radius: 14px;
+  background: var(--primary-soft);
+  border: 1px solid var(--primary-border);
+  color: var(--primary);
+}
+
+/* Inline notice banner — replaces alert() */
+.auth-notice {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 11px 13px;
+  margin-bottom: 18px;
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
+  font-weight: 500;
+  line-height: 1.4;
+  animation: fadeInUp 0.25s ease both;
+}
+
+.auth-notice svg {
+  flex-shrink: 0;
+}
+
+.auth-notice.error {
+  background: var(--danger-glow);
+  color: var(--danger);
+  border: 1px solid color-mix(in srgb, var(--danger) 26%, transparent);
+}
+
+.auth-notice.success {
+  background: var(--success-glow);
+  color: var(--success);
+  border: 1px solid color-mix(in srgb, var(--success) 26%, transparent);
+}
+
+.auth-notice.info {
+  background: var(--primary-soft);
+  color: var(--primary);
+  border: 1px solid var(--primary-border);
+}
+
+/* Trust line under the card */
+.auth-reassure {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  margin-top: 20px;
+  font-size: 0.8rem;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.auth-reassure svg {
+  color: var(--success);
+}

@@ -1,0 +1,574 @@
+/* ==========================================
+   Vault — browsing, cards, sharing states
+   ========================================== */
+
+/* Toolbar: search + count, sits above the grid */
+.vault-toolbar {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	margin-bottom: 20px;
+	flex-wrap: wrap;
+}
+
+.vault-search {
+	position: relative;
+	flex: 1 1 260px;
+	min-width: 0;
+	display: flex;
+	align-items: center;
+}
+
+.vault-search .search-icon {
+	position: absolute;
+	left: 13px;
+	color: var(--muted);
+	pointer-events: none;
+	display: flex;
+}
+
+.vault-search input {
+	width: 100%;
+	padding: 10px 38px 10px 40px;
+	border: 1px solid var(--border);
+	border-radius: var(--radius-md);
+	background: var(--input-bg);
+	color: var(--text);
+	font-size: 0.9rem;
+	font-family: inherit;
+	outline: none;
+	transition: var(--transition-fast);
+}
+
+.vault-search input::placeholder {
+	color: var(--muted);
+}
+
+.vault-search input:focus {
+	border-color: var(--border-focus);
+	box-shadow: 0 0 0 3px var(--primary-soft);
+}
+
+.vault-search .search-clear {
+	position: absolute;
+	right: 6px;
+	width: 26px;
+	height: 26px;
+	padding: 0;
+	background: transparent !important;
+	color: var(--muted) !important;
+	border: 0;
+	box-shadow: none !important;
+	border-radius: 6px;
+}
+
+.vault-search .search-clear:hover {
+	background: var(--panel-soft) !important;
+	color: var(--text) !important;
+}
+
+.vault-count {
+	font-size: 0.82rem;
+	color: var(--muted);
+	font-weight: 500;
+	white-space: nowrap;
+}
+
+/* Section header row (title + subtle helper) */
+.vault-section-head {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: 12px;
+	margin-bottom: 20px;
+	flex-wrap: wrap;
+}
+
+.results-section .vault-section-head h2,
+.vault-section-head h2 {
+	font-size: 1.15rem;
+	font-weight: 600;
+	color: var(--text);
+	letter-spacing: -0.02em;
+	margin: 0;
+}
+
+.vault-section-hint {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 0.78rem;
+	color: var(--muted);
+	font-weight: 500;
+}
+
+.vault-section-hint svg {
+	color: var(--success);
+}
+
+/* ---- Credential card ---- */
+.cred-card {
+	background: var(--panel);
+	border: 1px solid var(--border);
+	border-radius: var(--radius-lg);
+	padding: 18px;
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+	min-width: 0;
+	transition: border-color 0.18s ease, background 0.18s ease, transform 0.18s ease;
+}
+
+.cred-card:hover {
+	border-color: var(--border-strong);
+	background: var(--panel-hover);
+}
+
+.cred-head {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	min-width: 0;
+}
+
+.cred-avatar {
+	width: 40px;
+	height: 40px;
+	flex-shrink: 0;
+	border-radius: 10px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 1.05rem;
+	font-weight: 600;
+	color: #fff;
+	letter-spacing: -0.02em;
+	text-transform: uppercase;
+	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+
+.cred-identity {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	min-width: 0;
+	flex: 1 1 auto;
+}
+
+.cred-site {
+	font-size: 0.98rem;
+	font-weight: 600;
+	color: var(--text);
+	letter-spacing: -0.01em;
+	overflow-wrap: anywhere;
+}
+
+.cred-username {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 0.82rem;
+	color: var(--text-secondary);
+	overflow-wrap: anywhere;
+}
+
+.cred-username .cred-inline-copy {
+	width: 22px;
+	height: 22px;
+	opacity: 0;
+	transition: opacity 0.15s ease, color 0.15s ease, background 0.15s ease;
+}
+
+.cred-card:hover .cred-inline-copy {
+	opacity: 1;
+}
+
+.cred-fav {
+	width: 32px;
+	height: 32px;
+	flex-shrink: 0;
+	padding: 0;
+	background: transparent !important;
+	border: 0;
+	box-shadow: none !important;
+	color: var(--muted) !important;
+	border-radius: 8px;
+	transition: var(--transition-fast);
+}
+
+.cred-fav:hover {
+	background: var(--panel-soft) !important;
+	color: var(--warning) !important;
+}
+
+.cred-fav.active {
+	color: var(--warning) !important;
+}
+
+/* Password row */
+.cred-secret {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 9px 8px 9px 14px;
+	border: 1px solid var(--border);
+	border-radius: var(--radius-md);
+	background: var(--input-bg);
+	min-width: 0;
+}
+
+.cred-secret-value {
+	flex: 1 1 auto;
+	min-width: 0;
+	font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+	font-size: 0.92rem;
+	font-weight: 500;
+	color: var(--text);
+	letter-spacing: 0.02em;
+	overflow-wrap: anywhere;
+	user-select: none;
+}
+
+.cred-secret-value.is-hidden {
+	color: var(--text-secondary);
+	letter-spacing: 0.12em;
+}
+
+.cred-secret-value.is-shown {
+	user-select: text;
+}
+
+.cred-secret-actions {
+	display: flex;
+	align-items: center;
+	gap: 2px;
+	flex-shrink: 0;
+}
+
+/* Small square icon button used inside cards */
+.icon-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 32px;
+	height: 32px;
+	padding: 0;
+	border: 1px solid transparent;
+	border-radius: 8px;
+	background: transparent !important;
+	color: var(--muted) !important;
+	cursor: pointer;
+	box-shadow: none !important;
+	transition: var(--transition-fast);
+}
+
+.icon-btn:hover {
+	background: var(--panel-soft) !important;
+	color: var(--text) !important;
+}
+
+.icon-btn.is-copied {
+	color: var(--success) !important;
+}
+
+.cred-meta {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 0.74rem;
+	color: var(--muted);
+	font-weight: 500;
+}
+
+.cred-meta svg {
+	opacity: 0.8;
+}
+
+/* Action row */
+.cred-actions {
+	display: flex;
+	gap: 8px;
+	margin-top: 2px;
+}
+
+.cred-actions .cred-btn {
+	flex: 1;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 7px;
+	padding: 8px 10px;
+	font-size: 0.82rem;
+	font-weight: 500;
+}
+
+.cred-btn.ghost {
+	background: var(--panel-soft);
+	color: var(--text);
+	border: 1px solid var(--border);
+	box-shadow: none;
+}
+
+.cred-btn.ghost:hover {
+	background: var(--panel-hover);
+	border-color: var(--border-strong);
+}
+
+.cred-btn.danger-ghost {
+	flex: 0 0 auto;
+	background: transparent;
+	color: var(--muted);
+	border: 1px solid var(--border);
+	box-shadow: none;
+	padding: 8px 11px;
+}
+
+.cred-btn.danger-ghost:hover {
+	background: var(--danger-glow);
+	color: var(--danger);
+	border-color: transparent;
+}
+
+/* Status badge (sharing) */
+.status-badge {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 3px 9px 3px 8px;
+	border-radius: 99px;
+	font-size: 0.72rem;
+	font-weight: 600;
+	letter-spacing: 0.01em;
+}
+
+.status-badge .dot {
+	width: 6px;
+	height: 6px;
+	border-radius: 50%;
+	background: currentColor;
+}
+
+.status-active {
+	background: var(--success-glow);
+	color: var(--success);
+}
+
+.status-encrypted {
+	background: var(--primary-soft);
+	color: var(--primary);
+}
+
+.cred-badges {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+}
+
+.cred-party {
+	font-size: 0.8rem;
+	color: var(--text-secondary);
+	overflow-wrap: anywhere;
+}
+
+.cred-party strong {
+	color: var(--text);
+	font-weight: 600;
+}
+
+/* ---- Empty state ---- */
+.vault-empty {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	text-align: center;
+	padding: 52px 24px;
+	gap: 6px;
+}
+
+.vault-empty-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 56px;
+	height: 56px;
+	border-radius: 14px;
+	background: var(--panel-soft);
+	border: 1px solid var(--border);
+	color: var(--text-secondary);
+	margin-bottom: 12px;
+}
+
+.vault-empty h3 {
+	font-size: 1.05rem;
+	font-weight: 600;
+	color: var(--text);
+	letter-spacing: -0.01em;
+}
+
+.vault-empty p {
+	font-size: 0.9rem;
+	color: var(--text-secondary);
+	max-width: 340px;
+	line-height: 1.55;
+	margin: 0;
+}
+
+/* ---- Skeleton loading ---- */
+.skeleton-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr));
+	gap: 16px;
+}
+
+.skeleton-card {
+	background: var(--panel);
+	border: 1px solid var(--border);
+	border-radius: var(--radius-lg);
+	padding: 18px;
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+}
+
+.sk {
+	position: relative;
+	overflow: hidden;
+	background: var(--panel-soft);
+	border-radius: 6px;
+}
+
+.sk::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	transform: translateX(-100%);
+	background: linear-gradient(
+		90deg,
+		transparent,
+		color-mix(in srgb, var(--text) 6%, transparent),
+		transparent
+	);
+	animation: skShimmer 1.4s infinite;
+}
+
+.sk-row {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+}
+
+.sk-avatar {
+	width: 40px;
+	height: 40px;
+	border-radius: 10px;
+	flex-shrink: 0;
+}
+
+.sk-line {
+	height: 11px;
+}
+
+.sk-line.w-60 {
+	width: 60%;
+}
+.sk-line.w-40 {
+	width: 40%;
+}
+.sk-bar {
+	height: 40px;
+	border-radius: var(--radius-md);
+}
+.sk-btn {
+	height: 34px;
+	flex: 1;
+	border-radius: var(--radius-md);
+}
+
+@keyframes skShimmer {
+	100% {
+		transform: translateX(100%);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.sk::after {
+		animation: none;
+	}
+}
+
+/* ---- Share modal enrichment ---- */
+.share-target {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 12px 14px;
+	border-radius: var(--radius-md);
+	background: var(--panel-soft);
+	border: 1px solid var(--border);
+	margin-bottom: 20px;
+}
+
+.share-perms {
+	list-style: none;
+	margin: 18px 0 0;
+	padding: 14px 16px;
+	border-radius: var(--radius-md);
+	background: var(--primary-soft);
+	border: 1px solid var(--primary-border);
+	display: flex;
+	flex-direction: column;
+	gap: 11px;
+}
+
+.share-perms li {
+	display: flex;
+	align-items: flex-start;
+	gap: 10px;
+	font-size: 0.83rem;
+	color: var(--text-secondary);
+	line-height: 1.4;
+}
+
+.share-perms li svg {
+	flex-shrink: 0;
+	margin-top: 1px;
+	color: var(--primary);
+}
+
+.share-perms li strong {
+	color: var(--text);
+	font-weight: 600;
+}
+
+.modal-close {
+	position: absolute;
+	top: 16px;
+	right: 16px;
+	width: 32px;
+	height: 32px;
+	padding: 0;
+	background: transparent !important;
+	color: var(--muted) !important;
+	border: 0;
+	box-shadow: none !important;
+	border-radius: 8px;
+}
+
+.modal-close:hover {
+	background: var(--panel-soft) !important;
+	color: var(--text) !important;
+}
+
+.modal-content {
+	position: relative;
+}
+
+/* Responsive */
+@media (max-width: 560px) {
+	.cred-actions {
+		flex-wrap: wrap;
+	}
+	.cred-actions .cred-btn {
+		flex: 1 1 auto;
+	}
+}

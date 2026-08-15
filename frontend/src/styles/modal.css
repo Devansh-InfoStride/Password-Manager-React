@@ -70,6 +70,62 @@
   gap: 6px;
 }
 
+/* Confirmation dialog */
+.confirm-dialog {
+  max-width: 400px;
+  text-align: left;
+}
+
+.confirm-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  border-radius: var(--radius-md);
+  margin-bottom: 18px;
+}
+
+.confirm-icon-danger {
+  background: var(--danger-glow);
+  color: var(--danger);
+}
+
+.confirm-icon-primary {
+  background: var(--primary-soft);
+  color: var(--primary);
+}
+
+.confirm-dialog h3 {
+  margin-bottom: 8px;
+}
+
+.confirm-dialog p {
+  margin-bottom: 0;
+}
+
+.confirm-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 26px;
+}
+
+.confirm-actions button {
+  flex: 1;
+}
+
+/* Solid destructive CTA — used for the confirm action of a delete/revoke */
+.btn-danger-solid {
+  background: var(--danger);
+  color: #ffffff;
+  border: 1px solid transparent;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14);
+}
+
+.btn-danger-solid:hover {
+  background: color-mix(in srgb, var(--danger) 88%, #000);
+}
+
 /* Animation Keyframes */
 @keyframes modalFadeIn {
   from {

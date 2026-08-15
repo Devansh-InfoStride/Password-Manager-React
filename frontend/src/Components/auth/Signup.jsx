@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { ShieldCheckIcon, AlertIcon, CheckIcon } from "../ui/icons";
 import "../../styles/homepage.css";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
@@ -11,6 +12,8 @@ function Signup() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [otp, setOtp] = useState("");
+  const [notice, setNotice] = useState(null); // { type, text }
+  const [submitting, setSubmitting] = useState(false);
 
   const togglePassword = () => {
     setShowPassword(!showPassword);
@@ -18,6 +21,8 @@ function Signup() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setNotice(null);
+    setSubmitting(true);
 
     try {
       const response = await fetch(`${API_BASE_URL}/api/signup`, {
@@ -29,29 +34,39 @@ function Signup() {
       if (response.ok) {
         if (data.otp_sent) {
           setOtpSent(true);
-          alert('OTP sent to your email!');
+          setNotice({ type: 'info', text: 'We sent a one-time code to your email.' });
         } else {
-          alert('Signup successful! Please login.');
-          navigate('/login');
+          navigate('/login', { state: { justSignedUp: true } });
         }
       } else {
-        alert(data.error);
+        setNotice({ type: 'error', text: data.error || 'Signup failed. Please try again.' });
       }
     } catch (error) {
       console.error('Signup error:', error);
-      alert('Signup failed. Is the server running?');
+      setNotice({ type: 'error', text: 'Signup failed. Is the server running?' });
+    } finally {
+      setSubmitting(false);
     }
   };
+
+  const NoticeIcon = notice?.type === 'error' ? AlertIcon : notice?.type === 'success' ? CheckIcon : ShieldCheckIcon;
 
   return (
     <div className="auth-page">
       <div className="container">
         <div className="heading">
-          <h1>Welcome to Password Manager</h1>
-          <p>Create an account to manage your passwords securely.</p>
+          <span className="auth-brand"><ShieldCheckIcon size={24} /></span>
+          <h1>Create your PassGuard account</h1>
+          <p>Manage every password behind end-to-end encryption.</p>
           <h2>Sign Up</h2>
         </div>
         <div className="signupForm">
+          {notice && (
+            <div className={`auth-notice ${notice.type}`}>
+              <NoticeIcon size={16} />
+              <span>{notice.text}</span>
+            </div>
+          )}
           <form onSubmit={handleSubmit}>
             {!otpSent ? (
               <>
@@ -86,12 +101,17 @@ function Signup() {
                 onChange={(e) => setOtp(e.target.value)}
               />
             )}
-            <button type="submit">{otpSent ? "Verify OTP" : "Sign Up"}</button>
+            <button type="submit" disabled={submitting}>
+              {submitting ? 'Please wait…' : otpSent ? 'Verify OTP' : 'Sign Up'}
+            </button>
           </form>
           <p>
             Existing user? <Link to="/login">Login here</Link>
           </p>
         </div>
+        <p className="auth-reassure">
+          <ShieldCheckIcon size={14} /> Your data is encrypted before it leaves your device
+        </p>
       </div>
     </div>
   );

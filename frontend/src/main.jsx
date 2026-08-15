@@ -2,6 +2,7 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import { ShareProvider } from './context/ShareContext'
+import { ToastProvider } from './Components/ui/Toast'
 import './index.css'
 import App from './App.jsx'
 
@@ -14,9 +15,11 @@ if (localStorage.getItem('theme') === 'light') {
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
-      <ShareProvider>
-        <App />
-      </ShareProvider>
+      <ToastProvider>
+        <ShareProvider>
+          <App />
+        </ShareProvider>
+      </ToastProvider>
     </BrowserRouter>
   </StrictMode>,
 )

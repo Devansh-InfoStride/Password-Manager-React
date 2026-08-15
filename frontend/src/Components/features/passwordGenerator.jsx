@@ -1,53 +1,7 @@
 import { useState } from 'react'
 import { checkPasswordStrength, getStrengthInfo } from '../../utils/passwordStrength'
 import { generatePersonalizedPassword } from '../../utils/passwordGenerator'
-
-function VisibilityIcon({ visible }) {
-	if (visible) {
-		return (
-			<svg viewBox="0 0 24 24" aria-hidden="true">
-				<path
-					d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z"
-					fill="none"
-					stroke="currentColor"
-					strokeWidth="1.8"
-					strokeLinecap="round"
-					strokeLinejoin="round"
-				/>
-				<circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" strokeWidth="1.8" />
-			</svg>
-		)
-	}
-
-	return (
-		<svg viewBox="0 0 24 24" aria-hidden="true">
-			<path
-				d="M3 3l18 18"
-				fill="none"
-				stroke="currentColor"
-				strokeWidth="1.8"
-				strokeLinecap="round"
-				strokeLinejoin="round"
-			/>
-			<path
-				d="M10.5 6.4A11.2 11.2 0 0 1 12 6c6.5 0 10 6 10 6a17 17 0 0 1-3.6 4.1"
-				fill="none"
-				stroke="currentColor"
-				strokeWidth="1.8"
-				strokeLinecap="round"
-				strokeLinejoin="round"
-			/>
-			<path
-				d="M6.2 9.2A17 17 0 0 0 2 12s3.5 6 10 6c1.5 0 2.9-.3 4.1-.8"
-				fill="none"
-				stroke="currentColor"
-				strokeWidth="1.8"
-				strokeLinecap="round"
-				strokeLinejoin="round"
-			/>
-		</svg>
-	)
-}
+import { VisibilityIcon } from '../ui/icons'
 
 const maskPassword = (value = '') => {
 	const length = Math.max(String(value).length, 8)
