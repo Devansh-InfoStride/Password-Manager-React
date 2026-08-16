@@ -1,6 +1,7 @@
 import { Link, NavLink } from 'react-router-dom'
 import { useEffect, useState } from 'react'
-import logo from '../assets/Logo.png'
+import logoDark from '../assets/logo-dark.png'
+import logoLight from '../assets/logo-light.png'
 
 function Header() {
 	const [theme, setTheme] = useState(localStorage.getItem('theme') || 'dark')
@@ -22,8 +23,9 @@ function Header() {
 		<header className="site-header">
 			<nav className="nav-container">
 				<Link className="logo" to="/">
-					<img src={logo} alt="PassGuard logo" />
-					<span>PassGuard</span>
+					<span>|</span>
+					<img src={theme === 'dark' ? logoDark : logoLight} alt="PassGuard logo" />
+					<span>|</span>
 				</Link>
 
 				<ul className="nav-links">
